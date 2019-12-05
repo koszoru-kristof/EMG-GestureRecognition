@@ -13,7 +13,7 @@ class = ["F", "R", "L", "U", "D", "OK"]
 Data = []
 
 %Data = writedata(25, 1, 6, 'EMG_1ac25sec_MAT', 1, Data);
-Data = writedata(25, 1, 6, 'EMG_1ac25sec_ALE', 2, Data);
+Data = writedata(25, 1, 6, 'data/EMG_1ac25sec_ALE', 2, Data);
 
 % Data = writedata(1, 5, 6, 'EMG_5ac1sec_ALE', 3, Data);
 % Data = writedata(1, 5, 6, 'EMG_5ac1sec_MAT', 2, Data);
@@ -119,15 +119,16 @@ opts = trainingOptions("adam", "MaxEpochs",15, "InitialLearnRate",0.001, "Plots"
                                         %15                     %0.005
     
 net = trainNetwork(XTrain,YTrain,layers,opts)
+%%
 
-save('trainingFinalDataAle3Ale2Mat.mat','net')
+save('trainingFinalDataAle2-87.7%.mat','net')
 
 % nat=net
 % save('pafile.mat','nat')
 
 %% TEST
 
-load("trainingFinalDataAle3Ale2Mat.mat")
+load("trainingFinalDataAle2.mat")
 
 %%
 [predClass , score]= classify(net, XTest)
@@ -141,5 +142,3 @@ accuracy=(sum(YTest==predClass))/length(YTest)
 C=confusionmat(YTest,predClass)
 
 sum(sum(C))
-%%
-
