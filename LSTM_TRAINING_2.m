@@ -6,7 +6,7 @@ clear all
 %%
 class = ["F", "R", "L", "U", "D", "OK"]
 
-
+%class = ["F", "U", "D", "OK"]
 
 
 %% Load Dataset
