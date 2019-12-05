@@ -128,7 +128,7 @@ save('trainingFinalDataAle2-87.7%.mat','net')
 
 %% TEST
 
-load("trainingFinalDataAle2.mat")
+load("trainingFinalDataAle2-87.7%.mat")
 
 %%
 [predClass , score]= classify(net, XTest)
