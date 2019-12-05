@@ -12,13 +12,13 @@ class = ["F", "R", "L", "U", "D", "OK"]
 %% Load Dataset
 Data = []
 
-%Data = writedata(25, 1, 6, 'EMG_1ac25sec_MAT', 1, Data);
-Data = writedata(25, 1, 6, 'data/EMG_1ac25sec_ALE', 2, Data);
+%Data = writedata(25, 1, 6, 'data/EMG_1ac25sec_KK', 2, Data);
+[Data, numberacqu] = writedata(25, 1, 6, 'data/EMG_1ac25sec_ALE', 2, Data);
 
 % Data = writedata(1, 5, 6, 'EMG_5ac1sec_ALE', 3, Data);
 % Data = writedata(1, 5, 6, 'EMG_5ac1sec_MAT', 2, Data);
 
-%%
+
 % Data = writedata(25, 1, 6, 'EMG_1ac25sec_KK', 2, Data);
 % Data = writedata(25, 1, 6, 'EMG_1ac25sec_MAT', 1, Data);
 % Data = writedata(25, 1, 6, 'EMG_1ac25sec_Ting', 2, Data);
@@ -33,11 +33,11 @@ Data = writedata(25, 1, 6, 'data/EMG_1ac25sec_ALE', 2, Data);
 interest_actions = [1, 4, 5, 6]
 n_of_classes = length(interest_actions)
 %save('FinalDataFUDOK2ALE2KK1MAT2MAX.mat','Data');
+numberacqu
+FinalData = select(numberacqu, 25, interest_actions, Data);
 
-FinalData = select(2, 25, interest_actions, Data);
+%save('FinalDataAle2.mat','Data');
 
-save('FinalDataAle2.mat','Data');
-%%
 Data = FinalData;
 
  % 50 acq second (0.02 freq.), 8 sensors,
@@ -103,6 +103,8 @@ YTest = categorical(YTest);
 
 
 %%  Define Layers
+% Train the net with that part
+
 layers= [ 
     sequenceInputLayer(8) 
     lstmLayer(100,'OutputMode','sequence') 
@@ -119,7 +121,6 @@ opts = trainingOptions("adam", "MaxEpochs",15, "InitialLearnRate",0.001, "Plots"
                                         %15                     %0.005
     
 net = trainNetwork(XTrain,YTrain,layers,opts)
-%%
 
 save('trainingFinalDataAle2-87.7%.mat','net')
 

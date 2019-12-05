@@ -1,6 +1,7 @@
-function [Data] = writedata(time, numberacqu, numberactions,firstName, numberoffiles, Data)
+function [Data, numberacqu] = writedata(time, numberacqu, numberactions,firstName, numberoffiles, Data)
 
-lengthData = numberactions * numberacqu * time * 50 * 8; % 50 acq second (0.02 freq.), 8 sensors,
+% lengthData = numberactions * numberacqu * time * 50 * 8; % 50 acq second (0.02 freq.), 8 sensors,
+numberacqu = (numberoffiles * time * numberacqu)/25;
 
 % Data = zeros(9,numberoffiles * lengthData);
 
