@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityZmqExample", "UnityZmqExample.csproj", "{929D2C69-D9FD-2BCF-83B1-5576E4427EF3}"
+# Visual Studio for Mac
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{58B37ABA-55E0-0E38-B5C7-4D083CB7D77E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +9,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{929D2C69-D9FD-2BCF-83B1-5576E4427EF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{929D2C69-D9FD-2BCF-83B1-5576E4427EF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{929D2C69-D9FD-2BCF-83B1-5576E4427EF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{929D2C69-D9FD-2BCF-83B1-5576E4427EF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58B37ABA-55E0-0E38-B5C7-4D083CB7D77E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58B37ABA-55E0-0E38-B5C7-4D083CB7D77E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58B37ABA-55E0-0E38-B5C7-4D083CB7D77E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58B37ABA-55E0-0E38-B5C7-4D083CB7D77E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
