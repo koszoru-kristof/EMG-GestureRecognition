@@ -3,47 +3,35 @@ close all
 clear all
 
 
-%%
-class = ["F", "R", "L", "U", "D", "OK"]
+class = ["F", "R", "L", "U", "D", "OK"] % Which class we got in the data file we upload 
 
-%class = ["F", "U", "D", "OK"]
 
 
 %% Load Dataset
-Data = []
-numberacqu = 0;
 
-[Data, numberacqu] = writedata(25, 1, 6, 'data/EMG_1ac25sec_KK', 2, Data, numberacqu);
-%%
-[Data, numberacqu] = writedata(25, 1, 6, 'data/EMG_1ac25sec_MAT', 1, Data, numberacqu);
+Data = []
+numberacqu = 0; % Starting from 0 the number of acquisition
+
+%[Data, numberacqu] = writedata(25, 1, 6, 'data/EMG_1ac25sec_KK', 2, Data, numberacqu);
+%[Data, numberacqu] = writedata(25, 1, 6, 'data/EMG_1ac25sec_MAT', 1, Data, numberacqu);
+
 [Data, numberacqu] = writedata(25, 1, 6, 'data/EMG_1ac25sec_ALE', 2, Data, numberacqu);
 
-% Data = writedata(1, 5, 6, 'EMG_5ac1sec_ALE', 3, Data);
-% Data = writedata(1, 5, 6, 'EMG_5ac1sec_MAT', 2, Data);
-
-
-% Data = writedata(25, 1, 6, 'EMG_1ac25sec_KK', 2, Data);
-% Data = writedata(25, 1, 6, 'EMG_1ac25sec_MAT', 1, Data);
-% Data = writedata(25, 1, 6, 'EMG_1ac25sec_Ting', 2, Data);
-% Data = writedata(25, 1, 6, 'EMG_1ac25sec_MAX', 2, Data);
-
-% actions = [F, R, L, U, D, OK];
-
+% save('FinalDataFUDOK2ALE2KK1MAT2MAX.mat','Data'); % If you wana save
+% datas
 %%
 
 % interest_actions = [F, U, D, OK];
 
-interest_actions = [1, 4, 5, 6]
+% interest_actions = [1, 4, 5, 6]
+
+interest_actions = [1, 2, 3, 6]
 n_of_classes = length(interest_actions)
-%save('FinalDataFUDOK2ALE2KK1MAT2MAX.mat','Data');
-numberacqu
+
 FinalData = select(numberacqu, 25, interest_actions, Data);
+Data = FinalData; % chande data wich we are working with
 
-%save('FinalDataAle2.mat','Data');
-
-Data = FinalData;
-
- % 50 acq second (0.02 freq.), 8 sensors,
+% 50 acq second (0.02 freq.), 8 sensors,
 
 % Amp= readtable('EMG_5Actions30sec.csv');
 % XData=[];
@@ -73,17 +61,22 @@ for i= 1:length(rand_pos)
     Data_(:,i)= Data(:,rand_pos(i));
 end 
 
-Data=Data_;
+Data = Data_;
+
 %% Define Training and Test
 
-XTrain=Data(1:end-1,1:end-1001);
-YTrain=Data(end,1:end-1001);
+% We should use the 10% for the test
+n_data = length(Data(end,:));
+n_test = n_data*0.1;
 
-XTest=Data(1:end-1,end-1000:end);
-YTest=Data(end,end-1000:end);
+XTrain = Data(1:end - 1, 1:end - (n_test));
+YTrain = Data(end, 1:end - n_test);
 
-Train=[XTrain;YTrain];
-Test=[XTest;YTest];
+XTest  = Data(1:end - 1, end - n_test:end);
+YTest  = Data(end, end - n_test:end);
+
+Train  = [XTrain;YTrain];
+Test   = [XTest;YTest];
 
 %% define Labels as categorical Variables
 %XTrain = Train(1:end-1,:);
@@ -120,19 +113,16 @@ layers= [
     ]
 
 
-opts = trainingOptions("adam", "MaxEpochs",15, "InitialLearnRate",0.001, "Plots","training-progress", "GradientThreshold",1, "SequenceLength",100, "LearnRateSchedule","piecewise","LearnRateDropFactor",0.97)
-                                        %15                     %0.005
+opts = trainingOptions("rmsprop", "MaxEpochs",30, "InitialLearnRate",0.0005, "Plots","training-progress", "GradientThreshold",1, "SequenceLength",100, "LearnRateSchedule","piecewise","LearnRateDropFactor",0.97)
+                        %adam               %15                     %0.005
     
 net = trainNetwork(XTrain,YTrain,layers,opts)
 
-save('trainingFinal2KK2ALE1MAT.mat','net')
-
-% nat=net
-% save('pafile.mat','nat')
+save('training/trainingFinal2ALEFRLOK.mat','net')
 
 %% TEST
 
-load("trainingFinal2KK2ALE1MAT.mat")
+load("training/trainingFinal2ALEFRLOK.mat")
 
 %%
 [predClass , score]= classify(net, XTest)
