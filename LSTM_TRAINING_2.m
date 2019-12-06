@@ -14,6 +14,7 @@ Data = []
 numberacqu = 0;
 
 [Data, numberacqu] = writedata(25, 1, 6, 'data/EMG_1ac25sec_KK', 2, Data, numberacqu);
+%%
 [Data, numberacqu] = writedata(25, 1, 6, 'data/EMG_1ac25sec_MAT', 1, Data, numberacqu);
 [Data, numberacqu] = writedata(25, 1, 6, 'data/EMG_1ac25sec_ALE', 2, Data, numberacqu);
 
@@ -124,14 +125,14 @@ opts = trainingOptions("adam", "MaxEpochs",15, "InitialLearnRate",0.001, "Plots"
     
 net = trainNetwork(XTrain,YTrain,layers,opts)
 
-save('trainingFinalDataAle2-87.7%.mat','net')
+save('trainingFinal2KK2ALE1MAT.mat','net')
 
 % nat=net
 % save('pafile.mat','nat')
 
 %% TEST
 
-load("trainingFinalDataAle2-87.7%.mat")
+load("trainingFinal2KK2ALE1MAT.mat")
 
 %%
 [predClass , score]= classify(net, XTest)
