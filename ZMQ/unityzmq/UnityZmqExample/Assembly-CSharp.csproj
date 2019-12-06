@@ -76,6 +76,9 @@
     <Reference Include="Unity.TextMeshPro">
       <HintPath>/Users/alessandrodemartini/Documents/GitHub/EMG---Myo-gesture-recognition/ZMQ/unityzmq/UnityZmqExample/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.Analytics.DataPrivacy">
+      <HintPath>/Users/alessandrodemartini/Documents/GitHub/EMG---Myo-gesture-recognition/ZMQ/unityzmq/UnityZmqExample/Library/ScriptAssemblies/Unity.Analytics.DataPrivacy.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>/Applications/Unity/Unity.app/Contents/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
     </Reference>
@@ -286,9 +289,6 @@
     <Reference Include="NetMQ">
       <HintPath>/Users/alessandrodemartini/Documents/GitHub/EMG---Myo-gesture-recognition/ZMQ/unityzmq/UnityZmqExample/Assets/Plugins/NetMQ.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.Advertisements">
-      <HintPath>/Users/alessandrodemartini/Documents/GitHub/EMG---Myo-gesture-recognition/ZMQ/unityzmq/UnityZmqExample/Library/PackageCache/com.unity.ads@2.0.8/UnityEngine.Advertisements.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.Analytics.Tracker">
       <HintPath>/Users/alessandrodemartini/Documents/GitHub/EMG---Myo-gesture-recognition/ZMQ/unityzmq/UnityZmqExample/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.Tracker.dll</HintPath>
     </Reference>
@@ -297,9 +297,6 @@
     </Reference>
     <Reference Include="Unity.Analytics.StandardEvents">
       <HintPath>/Users/alessandrodemartini/Documents/GitHub/EMG---Myo-gesture-recognition/ZMQ/unityzmq/UnityZmqExample/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.StandardEvents.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.Purchasing">
-      <HintPath>/Users/alessandrodemartini/Documents/GitHub/EMG---Myo-gesture-recognition/ZMQ/unityzmq/UnityZmqExample/Library/PackageCache/com.unity.purchasing@2.0.3/UnityEngine.Purchasing.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>/Applications/Unity/Unity.app/Contents/MonoBleedingEdge/lib/mono/unity/mscorlib.dll</HintPath>
