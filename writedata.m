@@ -11,7 +11,7 @@ for i = 1:numberoffiles
    
   T = readtable(filename);
         
-  newData = table2array(T); 
+  newData = table2array(T); ; 
     
   Data = [Data, newData];
 
