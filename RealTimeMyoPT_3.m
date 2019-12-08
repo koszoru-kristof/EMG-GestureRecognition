@@ -7,7 +7,6 @@ clc;
 %% Load the model
 load('pqfile.mat');
 
-
 for trial=1:20
 
 %% myo test
@@ -22,6 +21,7 @@ install_myo_mex; % adds directories to MATLAB search path
 dataset=[];
 
 act=0;
+
 for labeIndex=1:1  %length(labels)
     close all
     %Action=labels(labeIndex);
@@ -80,11 +80,12 @@ end
 clc
 result=[];
 MyoData=MyoData';
+
 for i = 1:length(MyoData(1,:))
     [predClass(i) , score]= classify(net, MyoData(:,i));
     predClass(i);
     score;   
-    result=[result,find(score== max(score))];    
+    result=[result,find(score == max(score))];    
 end
 
 final= mode(result);

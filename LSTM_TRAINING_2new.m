@@ -7,16 +7,16 @@ class = ["F", "R", "L", "U", "D", "OK"]; % Which class we got in the data file w
 
 
 Data = [];
-numberacqu = 4; % Starting from 0 the number of acquisition
+numberacqu = 2; % Starting from 0 the number of acquisition
 
 %% Load Dataset
 
-[Data, numberacqu] = writedata(25, 1, 6, 'data/EMG_1ac25sec_KK', 2, Data, numberacqu);
+%[Data, numberacqu] = writedata(25, 1, 6, 'data/EMG_1ac25sec_KK', 2, Data, numberacqu);
 %[Data, numberacqu] = writedata(25, 1, 6, 'data/EMG_1ac25sec_MAT', 1, Data, numberacqu);
 
 [Data, numberacqu] = writedata(25, 1, 6, 'data/EMG_1ac25sec_ALE', 2, Data, numberacqu);
 
-save('FinalData2ALE.mat','Data'); % If you wana save
+save('FinalData.mat','Data'); % If you wana save
 % datas
 
 %%
@@ -24,7 +24,10 @@ save('FinalData2ALE.mat','Data'); % If you wana save
 %interest_actions   = [1, 2, 4, 6]; %[ F, R, U, OK];
 
 interest_actions = [1, 4, 5, 6];  % [F, U, D, OK]
+
 % interest_actions = [1, 2, 3, 6]; % [F, R, L, OK]
+
+interest_actions = [1, 3, 4, 5, 6];
 
 n_of_classes = length(interest_actions);
 
@@ -45,7 +48,6 @@ Y = [];
 for ii = 1:length(Data)
     
     temp = Data{ii,1};
-    n = 0.1*length(Data{ii,1});
     
     X{ii,1} = temp(1:8, 1:end);
     Y(ii,1) = temp(9, 1)';
@@ -64,9 +66,9 @@ for ii = 1:length(X)
 
     temp = X{ii,1};
     
-    leng = 640/length(X);
+    leng = round(640/n_of_classes - 0.5);
     
-    n_part = round(length(X{ii,1})/leng - 0.5)/4;    
+    n_part = round((length(X{ii,1})/leng - 0.5)/n_of_classes);    
         
     for jj = 0:(leng-1)
         num = jj*ii+1;
@@ -91,9 +93,9 @@ test = [];
 
 % How many test elements
 
-tot = leng * 4;
+tot = leng * n_of_classes;
 jump = 2; % every two elements a test
-num_test = tot/jump;
+num_test = round(tot/jump - 0.5);
 jj = 1;
 
 for ii = 1:(num_test)
@@ -195,12 +197,14 @@ net = trainNetwork(X_train,Y_train,layers,options);
 
 %% Save training datas
 
-save('training/trainingFinal2ALE2KKFRUOK_adam(new).mat','net')
+save('training/trainingFinal2ALE-FLUDOK_adam(new).mat','net')
 
 
 %% Test the net
 
-load("training/trainingFinal2ALE2KKFRUOK_adam(new).mat")
+load("training/trainingFinal2ALE2KK1MATFRUOK_adam(new).mat")
+
+%%
 
 YPred = classify(net,X_test,'MiniBatchSize',miniBatchSize);
 
