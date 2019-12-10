@@ -3,59 +3,37 @@ close all
 clear all
 
 
-class = ["F", "R", "L", "U", "D", "OK"] % Which class we got in the data file we upload 
+class = ["F", "R", "L", "U", "D", "OK"]; % Which class we got in the data file we upload 
 
 
+Data = [];
+numberacqu = 2; % Starting from 0 the number of acquisition
 
 %% Load Dataset
-
-Data = []
-numberacqu = 0; % Starting from 0 the number of acquisition
 
 %[Data, numberacqu] = writedata(25, 1, 6, 'data/EMG_1ac25sec_KK', 2, Data, numberacqu);
 %[Data, numberacqu] = writedata(25, 1, 6, 'data/EMG_1ac25sec_MAT', 1, Data, numberacqu);
 
 [Data, numberacqu] = writedata(25, 1, 6, 'data/EMG_1ac25sec_ALE', 2, Data, numberacqu);
 
-% save('FinalDataFUDOK2ALE2KK1MAT2MAX.mat','Data'); % If you wana save
+save('FinalData2ALE.mat','Data'); % If you wana save
 % datas
+
 %%
 
-% interest_actions = [F, U, D, OK];
+interest_actions   = [1, 2, 4, 6]; %[ F, R, U, OK];
 
-% interest_actions = [1, 4, 5, 6]
+% interest_actions = [1, 4, 5, 6]  % [F, U, D, OK]
+% interest_actions = [1, 2, 3, 6]; % [F, R, L, OK]
 
-interest_actions = [1, 2, 3, 6]
-n_of_classes = length(interest_actions)
+n_of_classes = length(interest_actions);
 
 FinalData = select(numberacqu, 25, interest_actions, Data);
 Data = FinalData; % chande data wich we are working with
 
-% 50 acq second (0.02 freq.), 8 sensors,
-
-% Amp= readtable('EMG_5Actions30sec.csv');
-% XData=[];
-% plot( Amp{:,1} )
-
-% YData=[];
-% for i=1:n_of_classes
-%     class(i)
-%     XDataNew=[];
-%     j=8*(i-1)+1;
-%     XDataNew= Amp{:,j:j+7};
-%     XData=[XData,XDataNew'];  
-%     for k=1:length(XDataNew)
-%         YData=[YData,i]; 
-%     end
-%     
-% end
-% 
-% Data=[XData;YData]
-
 %% Shuffle Data
 
 rand_pos = randperm(length(Data(1,:)));
-length(rand_pos)
 
 for i= 1:length(rand_pos)
     Data_(:,i)= Data(:,rand_pos(i));
@@ -79,27 +57,27 @@ Train  = [XTrain;YTrain];
 Test   = [XTest;YTest];
 
 %% define Labels as categorical Variables
-%XTrain = Train(1:end-1,:);
 
 YTrain = string(zeros(1, length(Train(end,:))));
 YTest  = string(zeros(1, length(Test(end,:))));
 
-% Da ottimizzare (allocazione statica)
-
 for i=1:length(Train(end,:))
-    YTrain(i) = class(Train(end,i));
+    YTrain(i) = class(Train(end,i)); % With arrays
+    %YTrain(i) = class(temp1(i)); % With cells
 end
 
 for i=1:length(Test(end,:))
-    YTest(i) = class(Test(end,i));
+    YTest(i) = class(Test(end,i)); % With arrays
+    %YTest(i) = class(temp2(i)); % With cells
 end
 
 YTrain = categorical(YTrain);
 YTest = categorical(YTest);
 
-
 %%  Define Layers
 % Train the net with that part
+
+
 
 layers= [ 
     sequenceInputLayer(8) 
@@ -113,22 +91,23 @@ layers= [
     ]
 
 
-opts = trainingOptions("rmsprop", "MaxEpochs",30, "InitialLearnRate",0.0005, "Plots","training-progress", "GradientThreshold",1, "SequenceLength",100, "LearnRateSchedule","piecewise","LearnRateDropFactor",0.97)
+opts = trainingOptions("adam", "MaxEpochs",30, "InitialLearnRate",0.0005, "Plots","training-progress", "GradientThreshold",1, "SequenceLength",100, "LearnRateSchedule","piecewise","LearnRateDropFactor",0.97)
                         %adam               %15                     %0.005
     
 net = trainNetwork(XTrain,YTrain,layers,opts)
 
-save('training/trainingFinal2ALEFRLOK.mat','net')
+save('training/trainingFinal2ALEFRUOK_adam.mat','net')
+
+
 
 %% TEST
 
-load("training/trainingFinal2ALEFRLOK.mat")
+load("training/trainingFinal2ALEFRLOK_rmsprop-81%.mat")
 
 %%
 [predClass , score]= classify(net, XTest)
 
 plot(score')
-
 
 %confusionchart(predClass, YTest)
 accuracy=(sum(YTest==predClass))/length(YTest)

@@ -83,6 +83,9 @@ load('FinalDataMAX.mat');
 
 % MyoData is a vector 8 x 400(data/s)*time(s) 25 sec -> 8x60000
 
+miniBatchSize = 27;
+result  = [];
+
 interest_actions = [1, 2, 3, 4, 5, 6]; 
 n_of_classes = length(interest_actions);
 
@@ -122,13 +125,12 @@ for ii = 1:length(X)
     
 end
 
-X = X_fin';
+X_ = X_fin';
 
-%% Predict action
-
+   
     miniBatchSize = 27;   
     
-    YPred = classify(net, X,'MiniBatchSize',miniBatchSize);
+    YPred = classify(net, X_,'MiniBatchSize',miniBatchSize);
     
     Prediction = mode(YPred);
     hist(YPred);
@@ -142,7 +144,6 @@ X = X_fin';
     
 %%
 
-pause(1);
 end
 
 
