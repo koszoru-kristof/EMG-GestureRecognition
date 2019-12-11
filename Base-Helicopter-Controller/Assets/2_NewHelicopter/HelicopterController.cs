@@ -8,12 +8,25 @@ namespace NewHelicopter
     //
     public class HelicopterController : MonoBehaviour
     {
+        ZmqCommunicator zmqSub;
+
+        public static HelicopterController Instance;
+
+
+        public string ip; // tcp://127.0.0.1:5000
+        public float updateInterval;
+
+        private string lastAction = "F";
+
+
         private string horizontalAxis = "Horizontal";
         private string verticalAxis = "Vertical";
         private string jumpButton = "Jump";
 
         [Header("Inputs")]
         public bool isVirtualJoystick = false;
+
+        public bool isZMQ_Joystick = false;
 
         [Header("View")]
         // to helicopter model
@@ -48,6 +61,45 @@ namespace NewHelicopter
 
                 _engineForce = value;
             }
+        }
+
+        void Awake()
+        {
+
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else if (Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            zmqSub = gameObject.AddComponent<ZmqCommunicator>();
+
+        }
+        private void OnEnable()
+        {
+            zmqSub.StartSubscriber(ip, updateInterval, ReadMessage);
+        }
+
+
+        public HelicopterController()
+        {
+
+            //zmqSub = gameObject.AddComponent<ZmqCommunicator>();
+            //zmqSub.StartSubscriber(ip, updateInterval, ReadMessage);
+        }
+
+        void ReadMessage(byte[] bytes)
+        {
+            string msg = System.Text.Encoding.ASCII.GetString(bytes);
+            Debug.Log("Received: " + msg);
+
+            //Todo: check the msg if correct 
+            lastAction = msg;
+                                 
         }
 
         private float distanceToGround ;
@@ -144,6 +196,7 @@ namespace NewHelicopter
             {
                 hMove.x = GetInput( horizontalAxis);
                 hMove.y = GetInput( verticalAxis);
+
             }
 
             if (GetInput(jumpButton) > 0)
@@ -156,12 +209,46 @@ namespace NewHelicopter
 
         private float GetInput(string input)
         {
-            if(isVirtualJoystick)
+            if (isVirtualJoystick)
                 return SimpleInput.GetAxis(input);
+            else if (isZMQ_Joystick)
+                return Evaluate_EMG_Input(input);
             else
                 return Input.GetAxis(input);
         }
         
+        private float Evaluate_EMG_Input(string input)
+        {
+
+            if(input == horizontalAxis && lastAction == "R")
+            {
+                return 1.0f;
+
+            }else if(input == horizontalAxis && lastAction == "L")
+            {
+                return -1.0f;
+
+            }else if(input == verticalAxis && lastAction == "F")
+            {
+                return 1.0f;
+            }
+            else if (input == jumpButton && lastAction == "U")
+            {
+                return 1.0f;
+            }
+            else if (input == jumpButton && lastAction == "D")
+            {
+                return -1.0f;
+            }
+
+            else if (lastAction == "OK")
+            {
+                return 0.0f;
+            }
+
+            return 0.0f;
+        }
+
 
         private void OnCollisionEnter()
         {
