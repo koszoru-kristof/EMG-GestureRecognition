@@ -30,8 +30,7 @@ n_of_classes = length(interest_actions);
 
 FinalData = select(numberacqu, 25, interest_actions, Data);
 Data = FinalData; % chande data wich we are working with
-
-%% Shuffle Data
+s%% Shuffle Data
 
 rand_pos = randperm(length(Data(1,:)));
 

@@ -7,26 +7,30 @@ class = ["F", "R", "L", "U", "D", "OK"]; % Which class we got in the data file w
 
 
 Data = [];
-numberacquFILE = 0; % Starting from 0 the number of acquisition
+numberacquFILE = 2; % Starting from 0 the number of acquisition
 
 %% Load Dataset
 
 [Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_ALE', 2, Data, numberacquFILE);
-[Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_MAT', 1, Data, numberacquFILE);
-[Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_KK', 2, Data, numberacquFILE);
+[Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_MAT', 2, Data, numberacquFILE);
+[Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_KK', 1, Data, numberacquFILE);
 
-save('FinalDataKK2MAT1ALE2.mat','Data'); % If you wana save
+[Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_5ac1sec_ALE', 3, Data, numberacquFILE);
+[Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_5ac1sec_KK', 2, Data, numberacquFILE);
+[Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_5ac1sec_MAT', 3, Data, numberacquFILE);
+
+save('FinalDataaLAST','Data'); % If you wanna save
 % datas
 
 %%
 
-%interest_actions   = [1, 2, 4, 6]; %[ F, R, U, OK];
+% interest_actions   = [1, 2, 4, 6]; %[ F, R, U, OK];
 
 % interest_actions = [1, 4, 5, 6];  % [F, U, D, OK]
 
 % interest_actions = [1, 2, 3, 6]; % [F, R, L, OK]
 
-interest_actions = [1, 3, 4, 5, 6];
+interest_actions = [1, 2, 3, 4, 5, 6];
 
 n_of_classes = length(interest_actions);
 
@@ -65,12 +69,8 @@ for ii = 1:length(X)
     
     % how many elements each cell
     temp = X{ii,1};
-    
-    % n_cells = 1500;
-    % leng = round(n_cells/n_of_classes - 0.5);
-    % n_acquisition = round((length(X{ii,1})/leng - 0.5)/n_of_classes); 
-    
-    n_acquisition = 10;
+
+    n_acquisition = 15;
     leng = round(length(X{ii,1})/(n_of_classes * n_acquisition) - 0.5);
     
     n_cells = round(leng*n_of_classes - 0.5);
@@ -99,7 +99,7 @@ test = [];
 % How many test elements
 
 tot = leng * n_of_classes;
-jump = 3; % every two elements a test
+jump = 7; % every two elements a test
 num_test = round(tot/jump - 0.5);
 jj = 1;
 
@@ -174,20 +174,21 @@ legend("Feature " + string(1:numFeatures),'Location','northeastoutside')
 
 % Layers
 inputSize = 8;
-numHiddenUnits = 100;
+numHiddenUnits = 150;
 numClasses = n_of_classes;
 
 layers = [ ...
     sequenceInputLayer(inputSize)
     lstmLayer(numHiddenUnits,'OutputMode','last')
-    %lstmLayer(numHiddenUnits,'OutputMode','sequence')
+    fullyConnectedLayer(numClasses*100)
+    dropoutLayer(0.3) % Dropout layer
     fullyConnectedLayer(numClasses)
     softmaxLayer
     classificationLayer]
 
 % Options
 
-maxEpochs = 250;
+maxEpochs = 100;
 miniBatchSize = 27;
 
 options = trainingOptions('adam', ...
@@ -203,12 +204,12 @@ net = trainNetwork(X_train,Y_train,layers,options);
 
 %% Save training datas
 
-save('training/trainingFinal2ALE2KK1MAT-ALL_adam(new)-NEW.mat','net')
+save('training/training-2KK2ALE-91,3%','net')
 
 
 %% Test the net
 
-load("training/trainingFinal2ALE2KK1MAT-ALL_adam(new)-NEW.mat")
+load("training/training-2KK2ALE.mat")
 
 %%
 

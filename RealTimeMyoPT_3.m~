@@ -5,10 +5,27 @@ clc;
 
 labels = ["F", "R", "L", "U", "D", "OK"];
 
+path(pathdef);
+clc;
+
+% Add the path necessary for zmq
+run ../addZmqUtility;
+
+topic = '';
+ip    ='tcp://127.0.0.1:5000';
+
+[pub,ok] = Publisher(ip);
+if not(ok)
+  errormsg('Publisher not initialized correctly');
+end
+
+pause(1);
+
 %% Load the trained model
-load('training/trainingFinal2ALE-FUDOK_adam(new)-USA.mat');
+load('training/training-2KK2ALE-91,3%.mat');
 
 %% Start acquisition
+
 for trial = 1:20
     
     % myo test
@@ -72,19 +89,17 @@ for trial = 1:20
 
 %% Simulation of MyoData
 
+%{
 clc
 clear all
 close all
 
 labels = ["F", "R", "L", "U", "D", "OK"];
 
-load('training/trainingFinal2ALE-ALL_adam(new)-NEW.mat');
+load('training/training-2KK2ALE-91,3%.mat');
 load('FinalDataMAX.mat');
 
 % MyoData is a vector 8 x 400(data/s)*time(s) 25 sec -> 8x60000
-
-miniBatchSize = 27;
-result  = [];
 
 interest_actions = [1, 2, 3, 4, 5, 6]; 
 n_of_classes = length(interest_actions);
@@ -95,20 +110,25 @@ Data = FinalData; % change data wich we are working with
 temp = cellaF(Data, interest_actions);
 Data = temp;
 
-MyoDataF = Data{1,1}(:,1190:1230);
-MyoDataR = Data{2,1}(:,1190:1230); 
-MyoDataL = Data{3,1}(:,1190:1230); 
-MyoDataU = Data{4,1}(:,1190:1230);
-MyoDataD = Data{5,1}(:,1190:1230);
-MyoDataOK = Data{6,1}(:,1190:1230);
+MyoDataF = Data{1,1}(:,8900:9000);
+MyoDataR = Data{2,1}(:,8900:9000); 
+MyoDataL = Data{3,1}(:,8900:9000); 
+MyoDataU = Data{4,1}(:,8900:9000);
+MyoDataD = Data{5,1}(:,8900:9000);
+MyoDataOK = Data{6,1}(:,8900:9000);
 
-
-
+%}
 %% Convert datas to cells
 
-X = {MyoDataOK};
+close all
+clc
+MyoData = MyoDataL;
 
-n_acquisition = 13;
+X = {MyoData};
+
+X_fin = {};
+
+n_acquisition = 15;
 
 for ii = 1:length(X)   
     
@@ -125,24 +145,43 @@ for ii = 1:length(X)
     
 end
 
-X_ = X_fin';
+X = X_fin';
 
-   
+%% Predict action
+
     miniBatchSize = 27;   
     
-    YPred = classify(net, X_,'MiniBatchSize',miniBatchSize);
+    YPred = classify(net, X,'MiniBatchSize',miniBatchSize);
     
-    Prediction = mode(YPred);
+    Prediction = mode(YPred)
     hist(YPred);
     
-    i=0;
-    for ii = 1:length(YPred)
-        if(YPred(ii,1) == "OK")
-        i = i + 1
-        end
-    end
+    msg = string(Prediction);
+    
+    %i=0;
+    %for ii = 1:length(YPred)
+    %    if(YPred(ii,1) == "OK")
+        i = i + 1;
+    %    end
+    %end
     
 %%
+% pause(1);
+
+%% Init console
+
+close all;
+   
+   if (strcmp(msg,''))
+       break;
+   end
+   
+   fprintf(['Publish: ' msg ' \n']);
+   bool = pub.publish(topic, msg); 
+   pause(1);
+
+clear pub;
+
 
 end
 
