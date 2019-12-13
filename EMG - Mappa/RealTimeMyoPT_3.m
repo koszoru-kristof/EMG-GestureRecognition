@@ -3,7 +3,8 @@ close all;
 clear; 
 clc;
 
-labels = ["F", "R", "L", "U", "D", "OK"];
+% labels = ["F", "R", "L", "U", "D", "OK"];
+labels = ["RX", "F", "OH", "R", "L", "SM"];
 
 %path(pathdef);
 clc;
@@ -19,15 +20,15 @@ if not(ok)
   errormsg('Publisher not initialized correctly');
 end
 
-pause(1);
-bool = pub.publish(topic, 'U');
+% pause(1);
+% bool = pub.publish(topic, 'U');
 
 %% Load the trained model
-load('training/training-ALE_dec_11.mat');
+load('training/training_ALE-RFOHRLSM-2layer.mat');
 
 %% Start acquisition
 
-for trial = 1:5
+for trial = 1:50
     
     % myo test
 
@@ -176,7 +177,8 @@ X = X_fin';
     Prediction = mode(YPred)
     % hist(YPred);
     
-    msg = char(Prediction);
+    Prediction = string(Prediction)
+    % msg = char(Prediction);
     
     %i=0;
     %for ii = 1:length(YPred)
@@ -192,7 +194,16 @@ X = X_fin';
 
 %close all;
    
-   if (strcmp(msg,''))
+ 
+   
+   labels = ["RX", "F", "OH", "R", "L", "SM"];
+   msg_labels = ["OK", "F", "U", "R", "L", "D"];
+   
+   index = find(labels(1,:) == Prediction);
+   
+   msg = char(msg_labels(index));
+   
+  if (strcmp(msg,''))
        break;
    end
    

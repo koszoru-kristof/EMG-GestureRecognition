@@ -6,9 +6,9 @@ Data = []
 %%
 
 
-labels = ["RX", "F", "OH", "R", "L", "SM", "QQ"] %Fist, OpenHand, Right, Left, Up, Down
+labels = ["DN", "F", "OH", "R", "L", "SM", "QQ"] %Fist, OpenHand, Right, Left, Up, Down
 
-for k = 1:labels.length()-1
+for k = 1:1
     
     labels(k)        
     disp('START ACQUISITION')
@@ -96,6 +96,6 @@ end
 
 Dataset = table();
 Dataset{:,:} = Data;
-writetable(Dataset,'EMG2_1ac25sec_ALE1.csv','WriteRowNames',true)
+writetable(Dataset,'EMG3_1ac25sec_ALE1.csv','WriteRowNames',true)
 
 
