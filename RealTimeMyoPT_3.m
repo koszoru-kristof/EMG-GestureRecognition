@@ -9,7 +9,7 @@ path(pathdef);
 clc;
 
 % Add the path necessary for zmq
-run ../addZmqUtility;
+run ./addZmqUtility;
 
 topic = '';
 ip    ='tcp://127.0.0.1:5000';
@@ -122,7 +122,7 @@ MyoDataOK = Data{6,1}(:,8900:9000);
 
 close all
 clc
-MyoData = MyoDataL;
+%MyoData = MyoDataL;
 
 X = {MyoData};
 

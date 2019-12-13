@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.38365796, g: 0.5488438, b: 0.55641407, a: 1}
+  m_IndirectSpecularColor: {r: 0.38365766, g: 0.54884374, b: 0.55641294, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &4
 LightmapSettings:
@@ -867,7 +867,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9a5122aca22f3d43bf9bf65d2048730, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ip: 
+  updateInterval: 0
   isVirtualJoystick: 1
+  isZMQ_Joystick: 0
   HelicopterSound: {fileID: 603330062}
   HelicopterModel: {fileID: 114800204}
   MainRotorController: {fileID: 1803939198}
@@ -10127,7 +10130,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9a5122aca22f3d43bf9bf65d2048730, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isVirtualJoystick: 1
+  ip: tcp://127.0.0.1:5000
+  updateInterval: 1
+  isVirtualJoystick: 0
+  isZMQ_Joystick: 1
   HelicopterSound: {fileID: 603330062}
   HelicopterModel: {fileID: 1072598090}
   MainRotorController: {fileID: 413298506}
@@ -18683,7 +18689,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9a5122aca22f3d43bf9bf65d2048730, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ip: 
+  updateInterval: 0
   isVirtualJoystick: 1
+  isZMQ_Joystick: 0
   HelicopterSound: {fileID: 603330062}
   HelicopterModel: {fileID: 1923619535}
   MainRotorController: {fileID: 1763587955}
