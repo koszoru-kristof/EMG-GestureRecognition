@@ -9,7 +9,7 @@ path(pathdef);
 clc;
 
 % Add the path necessary for zmq
-run ../addZmqUtility;
+run ./addZmqUtility;
 
 topic = '';
 ip    ='tcp://127.0.0.1:5000';
@@ -125,6 +125,7 @@ MyoDataOK = Data{4,1}(:,n:n+200);
 
 close all
 clc
+<<<<<<< HEAD
 
 l = 20*rand(1);
 
@@ -143,6 +144,9 @@ else
 end
 
 %% Convert datas to cells
+=======
+%MyoData = MyoDataL;
+>>>>>>> f2dcc4d1f86a203a37d641408faba20b80e88387
 
 X = {MyoData};
 

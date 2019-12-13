@@ -1,0 +1,10 @@
+
+# MATLAB files
+*.mex*
+*.asv
+
+# Development files
+*_devel*
+*.db
+*.log
+*.bak

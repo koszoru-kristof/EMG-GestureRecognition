@@ -222,11 +222,11 @@ namespace NewHelicopter
 
             if(input == horizontalAxis && lastAction == "R")
             {
-                return 1.0f;
+                return 0.5f;
 
             }else if(input == horizontalAxis && lastAction == "L")
             {
-                return -1.0f;
+                return -0.5f;
 
             }else if(input == verticalAxis && lastAction == "F")
             {
