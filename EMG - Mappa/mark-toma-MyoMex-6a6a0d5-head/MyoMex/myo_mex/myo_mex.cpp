@@ -10,7 +10,7 @@
 #include <windows.h>      // win api for threading support
 #include <process.h>      // process/thread support
 #include <queue>          // standard type for fifo queue
-#include "myo/myo.hpp"
+#include "myo\myo.hpp"
 #include "myo_class.hpp"
 
 // macros

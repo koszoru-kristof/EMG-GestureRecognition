@@ -5,7 +5,7 @@ close all
 Data = []
 %%
 
-labels = ["F", "O", "R", "L", "U", "D", "QQ"] %Fist, OpenHand, Right, Left, Up, Down
+labels = ["RX", "O", "R", "L", "U", "D", "QQ"] %Fist, OpenHand, Right, Left, Up, Down
 
 for k = 1:labels.length()-1
     

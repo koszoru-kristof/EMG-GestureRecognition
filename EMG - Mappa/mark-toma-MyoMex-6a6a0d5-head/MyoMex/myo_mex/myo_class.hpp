@@ -11,7 +11,7 @@
 #endif
 
 #include "mex.h"
-#include "myo/myo.hpp"  // myo sdk cpp binding
+#include "myo\myo.hpp"  // myo sdk cpp binding
 
 #include <array>        // myo sdk emg data
 #include <vector>
