@@ -22,7 +22,7 @@ filename = which(mfilename);
 zmq_paradigm = {'subscriber','publisher'};
 
 for i=1:numel(zmq_paradigm)
-    addpath([pathstr,'/',zmq_paradigm{i}]);   
+    addpath([pathstr,'\',zmq_paradigm{i}]);   
 end;
 
 end

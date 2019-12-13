@@ -3,13 +3,32 @@ close all
 clear all
 
 
-class = ["RX", "F", "OH", "R", "L", "SM"]; % Which class we got in the data file we upload 
+class = ["RX", "F", "OH", "R", "L", "DN"]; % Which class we got in the data file we upload 
 
 
 Data = [];
 numberacquFILE = 0; % Starting from 0 the number of acquisition, if you don't load files
 
 %% Load files
+
+
+load('data/EMG2_ALE_DN_1_DN.mat');
+Data2 = Data;
+Data2(9,:) = 6;
+
+%%
+load('data/EMG2_ALE_complessivi_1_RXFOHRLSM.mat');
+Data1 = Data;
+position = [];
+
+interest_actions = [1, 2, 3, 4, 5];
+
+FinalData = select(numberacquFILE, 25, interest_actions, Data1);
+Data1 = FinalData; % chande data wich we are working with
+
+%%
+Data = [Data1 Data2];
+%%
 %{
 load('data/EMG_ALE_complessivi_2.6_FRLUDOK.mat');
 Data1 = Data;
@@ -25,7 +44,8 @@ Data5 = Data;
 Data = [Data Data1 Data2 Data3 Data4 Data5];
 %% Load Dataset
 
-[Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG2_1ac25sec_ALE', 1, Data, numberacquFILE);
+
+[Data, numberacquFILE] = writedata(25, 1, 1, 'Data/EMG3_1ac25sec_ALE', 1, Data, numberacquFILE);
 % [Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_MAT', 2, Data, numberacquFILE);
 % [Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_KK', 1, Data, numberacquFILE);
 
@@ -33,21 +53,20 @@ Data = [Data Data1 Data2 Data3 Data4 Data5];
 %[Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_5ac1sec_Ting', 4, Data, numberacquFILE);
 % [Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_5ac1sec_MAT', 3, Data, numberacquFILE);
 
-filename = append('data/EMG2_ALE_complessivi_', string(numberacquFILE),'_RXFOHRLSM','.mat')
+filename = append('data/EMG2_ALE_DN_', string(numberacquFILE),'_DN','.mat')
 
 save(filename,'Data');
+
 %}
-
 %%
-
-%interest_actions = [1, 2, 3, 6];
-
-% interest_actions = [1, 2, 3, 6]; % [F, R, L, OK]
-
 interest_actions = [1, 2, 3, 4, 5, 6];
 
 n_of_classes = length(interest_actions);
 
+
+%interest_actions = [1, 2, 3, 6];
+
+% interest_actions = [1, 2, 3, 6]; % [F, R, L, OK]
 
 FinalData = select(numberacquFILE, 25, interest_actions, Data);
 Data = FinalData; % chande data wich we are working with
@@ -118,7 +137,7 @@ jump = 10; % every two elements a test
 num_test = round(tot/jump - 0.5);
 jj = 1;
 
-for ii = 1:(num_test)
+for ii = 1:(num_test-3)
    
 	X_test{jj,1} = X_{jump*(ii), 1}; % X_test{jj,1} = X_(salto*(ii), 1);
     test = [test jump*(ii)];
@@ -220,7 +239,7 @@ net = trainNetwork(X_train,Y_train,layers,options);
 
 %% Save training datas
 
-save('training/training_ALE-RFOHRLSM-2layer.mat','net')
+save('training/training_ALE-RFOHRLDW-2layer.mat','net')
 
 
 %% Test the net
