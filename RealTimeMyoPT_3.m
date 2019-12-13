@@ -22,7 +22,7 @@ end
 pause(1);
 
 %% Load the trained model
-load('training/training-2KK2ALE-91,3%.mat');
+load('training/training-ALE-FRLOK.mat');
 
 %% Start acquisition
 
@@ -89,40 +89,64 @@ for trial = 1:20
 
 %% Simulation of MyoData
 
-%{
+% %{
+
 clc
 clear all
 close all
 
-labels = ["F", "R", "L", "U", "D", "OK"];
+labels = ["F", "R", "L", "OK"];
 
-load('training/training-2KK2ALE-91,3%.mat');
-load('FinalDataMAX.mat');
+load('training/training_ALE-KK-MAT(6.6)_-FRLOK.mat');
+load('data/EMG_MAX_complessivi_2.2_FRLUDOK.mat');
 
 % MyoData is a vector 8 x 400(data/s)*time(s) 25 sec -> 8x60000
 
-interest_actions = [1, 2, 3, 4, 5, 6]; 
+interest_actions = [1, 2, 3, 6]; 
 n_of_classes = length(interest_actions);
 
-FinalData = select(2, 25, interest_actions, Data);
+FinalData = select(1, 25, interest_actions, Data);
 Data = FinalData; % change data wich we are working with
 
 temp = cellaF(Data, interest_actions);
 Data = temp;
+%%
 
-MyoDataF = Data{1,1}(:,8900:9000);
-MyoDataR = Data{2,1}(:,8900:9000); 
-MyoDataL = Data{3,1}(:,8900:9000); 
-MyoDataU = Data{4,1}(:,8900:9000);
-MyoDataD = Data{5,1}(:,8900:9000);
-MyoDataOK = Data{6,1}(:,8900:9000);
+while(1)
+    
+n = round(4000*rand(1));
 
-%}
-%% Convert datas to cells
+MyoDataF = Data{1,1}(:,n:n+200);
+MyoDataR = Data{2,1}(:,n:n+200); 
+MyoDataL = Data{3,1}(:,n:n+200); 
+MyoDataOK = Data{4,1}(:,n:n+200);
+
+% %}
 
 close all
 clc
+<<<<<<< HEAD
+
+l = 20*rand(1);
+
+if(l<=5)
+    MyoData = MyoDataR;
+    "right"
+elseif(l>5 && l<=10)
+    MyoData = MyoDataL;
+    "left"
+elseif(l>10 && l <=15)
+    MyoData = MyoDataOK;
+    "OK"
+else
+    MyoData = MyoDataF;
+    "FIRST"
+end
+
+%% Convert datas to cells
+=======
 %MyoData = MyoDataL;
+>>>>>>> f2dcc4d1f86a203a37d641408faba20b80e88387
 
 X = {MyoData};
 
@@ -164,7 +188,8 @@ X = X_fin';
         i = i + 1;
     %    end
     %end
-    
+    pause(1)
+end    
 %%
 % pause(1);
 
@@ -182,5 +207,6 @@ close all;
 
 
 end
+
 
 

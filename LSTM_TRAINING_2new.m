@@ -7,32 +7,49 @@ class = ["F", "R", "L", "U", "D", "OK"]; % Which class we got in the data file w
 
 
 Data = [];
-numberacquFILE = 2; % Starting from 0 the number of acquisition
+numberacquFILE = 0; % Starting from 0 the number of acquisition, if you don't load files
 
+%% Load files
+
+load('data/EMG_ALE_complessivi_2.6_FRLUDOK.mat');
+Data1 = Data;
+load('data/EMG_KK_complessivi_1.4_FRLUDOK.mat');
+Data2 = Data;
+load('data/EMG_MAT_complessivi_2.6_FRLUDOK.mat');
+Data3 = Data;
+load('data/EMG_MAX_complessivi_2.2_FRLUDOK.mat');
+Data4 = Data;
+load('data/EMG_Ting_complessivi_2.8_FRLUDOK.mat');
+Data5 = Data;
+
+Data = [Data Data1 Data2 Data3 Data4 Data5];
 %% Load Dataset
 
-[Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_ALE', 2, Data, numberacquFILE);
-[Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_MAT', 2, Data, numberacquFILE);
-[Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_KK', 1, Data, numberacquFILE);
+[Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_Ting', 2, Data, numberacquFILE);
+% [Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_MAT', 2, Data, numberacquFILE);
+% [Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_KK', 1, Data, numberacquFILE);
 
-[Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_5ac1sec_ALE', 3, Data, numberacquFILE);
-[Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_5ac1sec_KK', 2, Data, numberacquFILE);
-[Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_5ac1sec_MAT', 3, Data, numberacquFILE);
+% [Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_1ac25sec_KK', 2, Data, numberacquFILE);
+[Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_5ac1sec_Ting', 4, Data, numberacquFILE);
+% [Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_5ac1sec_MAT', 3, Data, numberacquFILE);
 
-save('FinalDataaLAST','Data'); % If you wanna save
+filename = append('data/EMG_TING_complessivi_', string(numberacquFILE),'_FRLUDOK','.mat')
+
+save(filename,'Data');
+
+% save('FinalAleAll','Data'); % If you wanna save
 % datas
 
 %%
 
-% interest_actions   = [1, 2, 4, 6]; %[ F, R, U, OK];
-
-% interest_actions = [1, 4, 5, 6];  % [F, U, D, OK]
+interest_actions = [1, 2, 3, 6];
 
 % interest_actions = [1, 2, 3, 6]; % [F, R, L, OK]
 
-interest_actions = [1, 2, 3, 4, 5, 6];
+% interest_actions = [1, 2, 3, 4, 5, 6];
 
 n_of_classes = length(interest_actions);
+
 
 FinalData = select(numberacquFILE, 25, interest_actions, Data);
 Data = FinalData; % chande data wich we are working with
@@ -70,7 +87,7 @@ for ii = 1:length(X)
     % how many elements each cell
     temp = X{ii,1};
 
-    n_acquisition = 15;
+    n_acquisition = 10;
     leng = round(length(X{ii,1})/(n_of_classes * n_acquisition) - 0.5);
     
     n_cells = round(leng*n_of_classes - 0.5);
@@ -99,7 +116,7 @@ test = [];
 % How many test elements
 
 tot = leng * n_of_classes;
-jump = 7; % every two elements a test
+jump = 10; % every two elements a test
 num_test = round(tot/jump - 0.5);
 jj = 1;
 
@@ -160,7 +177,8 @@ Y_test  = categorical(Y_test);
 clc
 clear FinalData numberacqu temp Data ii n jj...
     X_fin Y_fin X Y salto leng num_test tot ...
-    X_ Y_ test test1 num n_part i temp1 temp2
+    X_ Y_ test test1 num n_part i temp1 temp2...
+    Data1 Data2 Data3 Data4 Data5
 
 figure
 plot(X_train{1}')
@@ -180,9 +198,9 @@ numClasses = n_of_classes;
 layers = [ ...
     sequenceInputLayer(inputSize)
     lstmLayer(numHiddenUnits,'OutputMode','last')
-    fullyConnectedLayer(numClasses*100)
+    fullyConnectedLayer(n_of_classes*100)
     dropoutLayer(0.3) % Dropout layer
-    fullyConnectedLayer(numClasses)
+    fullyConnectedLayer(n_of_classes)
     softmaxLayer
     classificationLayer]
 
@@ -204,12 +222,12 @@ net = trainNetwork(X_train,Y_train,layers,options);
 
 %% Save training datas
 
-save('training/training-2KK2ALE-91,3%','net')
+save('training/training_ALE-KK-MAT-MAX-Ting(6.6)_-FRLOK-1layer.mat','net')
 
 
 %% Test the net
 
-load("training/training-2KK2ALE.mat")
+load("training/training_ALE-KK-MAT(6.6)_-FRLOK-1layer.mat")
 
 %%
 
