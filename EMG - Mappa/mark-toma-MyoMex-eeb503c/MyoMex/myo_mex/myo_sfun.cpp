@@ -7,7 +7,7 @@
 #include "myo_sfun.h"        // macros and defines for general behavior
 #include "myo_sfun_wiring.h" // macros and defines for sfcn block and data
 
-#include "myo/myo.hpp"   // Myo SDK bindings
+#include "myo\myo.hpp"   // Myo SDK bindings
 #include "myo_class.hpp" // application class for Myo implementation
 
 #include <windows.h>      // win api for threading support
