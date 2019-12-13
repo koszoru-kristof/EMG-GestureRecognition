@@ -1,7 +1,0 @@
-
-# MATLAB files
-*.mex*
-*.asv
-
-# Development files
-*_devel*
