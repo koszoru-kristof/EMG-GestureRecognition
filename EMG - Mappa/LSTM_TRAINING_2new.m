@@ -24,8 +24,9 @@ Data5 = Data;
 
 Data = [Data Data1 Data2 Data3 Data4 Data5];
 %% Load Dataset
+%}
 
-[Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG2_1ac25sec_ALE', 1, Data, numberacquFILE);
+[Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG3_1ac25sec_ALE', 1, Data, numberacquFILE);
 % [Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_MAT', 2, Data, numberacquFILE);
 % [Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_KK', 1, Data, numberacquFILE);
 
@@ -33,7 +34,7 @@ Data = [Data Data1 Data2 Data3 Data4 Data5];
 %[Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_5ac1sec_Ting', 4, Data, numberacquFILE);
 % [Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_5ac1sec_MAT', 3, Data, numberacquFILE);
 
-filename = append('data/EMG2_ALE_complessivi_', string(numberacquFILE),'_RXFOHRLSM','.mat')
+filename = append('data/EMG2_ALE_DN_', string(numberacquFILE),'_DN','.mat')
 
 save(filename,'Data');
 %}
