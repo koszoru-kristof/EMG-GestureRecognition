@@ -96,6 +96,6 @@ end
 
 Dataset = table();
 Dataset{:,:} = Data;
-writetable(Dataset,'EMG2_1ac25sec_ALE1.csv','WriteRowNames',true)
+writetable(Dataset,'EMG2_1ac25sec_KK1.csv','WriteRowNames',true)
 
 
