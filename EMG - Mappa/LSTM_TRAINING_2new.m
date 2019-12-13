@@ -3,14 +3,14 @@ close all
 clear all
 
 
-class = ["F", "R", "L", "U", "D", "OK"]; % Which class we got in the data file we upload 
+class = ["RX", "F", "OH", "R", "L", "SM"]; % Which class we got in the data file we upload 
 
 
 Data = [];
 numberacquFILE = 0; % Starting from 0 the number of acquisition, if you don't load files
 
 %% Load files
-
+%{
 load('data/EMG_ALE_complessivi_2.6_FRLUDOK.mat');
 Data1 = Data;
 load('data/EMG_KK_complessivi_1.4_FRLUDOK.mat');
@@ -24,29 +24,28 @@ Data5 = Data;
 
 Data = [Data Data1 Data2 Data3 Data4 Data5];
 %% Load Dataset
+%}
 
-[Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_Ting', 2, Data, numberacquFILE);
+[Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG3_1ac25sec_ALE', 1, Data, numberacquFILE);
 % [Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_MAT', 2, Data, numberacquFILE);
 % [Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_KK', 1, Data, numberacquFILE);
 
 % [Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_1ac25sec_KK', 2, Data, numberacquFILE);
-[Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_5ac1sec_Ting', 4, Data, numberacquFILE);
+%[Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_5ac1sec_Ting', 4, Data, numberacquFILE);
 % [Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_5ac1sec_MAT', 3, Data, numberacquFILE);
 
-filename = append('data/EMG_TING_complessivi_', string(numberacquFILE),'_FRLUDOK','.mat')
+filename = append('data/EMG2_ALE_DN_', string(numberacquFILE),'_DN','.mat')
 
 save(filename,'Data');
-
-% save('FinalAleAll','Data'); % If you wanna save
-% datas
+%}
 
 %%
 
-interest_actions = [1, 2, 3, 6];
+%interest_actions = [1, 2, 3, 6];
 
 % interest_actions = [1, 2, 3, 6]; % [F, R, L, OK]
 
-% interest_actions = [1, 2, 3, 4, 5, 6];
+interest_actions = [1, 2, 3, 4, 5, 6];
 
 n_of_classes = length(interest_actions);
 
@@ -222,7 +221,7 @@ net = trainNetwork(X_train,Y_train,layers,options);
 
 %% Save training datas
 
-save('training/training_ALE-KK-MAT-MAX-Ting(6.6)_-FRLOK-1layer.mat','net')
+save('training/training_ALE-RFOHRLSM-2layer.mat','net')
 
 
 %% Test the net

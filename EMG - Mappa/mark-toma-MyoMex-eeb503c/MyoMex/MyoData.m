@@ -16,7 +16,7 @@ classdef MyoData < handle
   %   % Myo as they are being provided by MyoMex.
   %
   %   % Inspect the <data> properties' most recent samples
-  %   m.timeIMU % timeIMU corresponds to IMU data ONLY
+  %   m.timeIMU % timeIMU corresponds to IMU and state data below
   %   m.quat
   %   m.rot         % rotation matrix   - computed from quat
   %   m.gyro        % sensor frame gyro
@@ -38,7 +38,7 @@ classdef MyoData < handle
   %   m.xDir_elbow
   %   m.xDir_unknown
   %
-  %   m.timeEMG % corresponds to all other data listed below
+  %   m.timeEMG % corresponds to raw EMG data ONLY!
   %   m.emg
   %
   %   % Inspect the <data>_log properties
@@ -55,19 +55,6 @@ classdef MyoData < handle
   %
   %   % Now the MyoData objects aren't receiving new data, but you can
   %   % still use them to analyze, save, etc. the data you collected.
-  
-  properties
-    % newDataFcn  Callback to execute when new data is received
-    %   This is either the empty matrix when not set, or a function handle
-    %   conforming to the signature newDataFcn(source,eventdata,...) when
-    %   set. If newDataFcn is set, it is called when a new frame of data is
-    %   received from MyoMex.
-    %
-    %   Input parameter source is the handle to this MyoData object, and
-    %   eventdata is currently passed the empty matrix (reserved for future
-    %   use).
-    newDataFcn
-  end
   
   properties (SetAccess = private)
     % timeIMU  Time of sampling for IMU data
@@ -98,6 +85,15 @@ classdef MyoData < handle
     % See also:
     %   rot, q2r, qRot, qMult, qInv, qRenorm
     quat
+    % rot  Rotation matrix representing the orientation of Myo
+    %   This is a 3x3 orthonormal matrix. Computed from quat, this rotation
+    %   matrix transforms a 3x1 vector p from coordinates in the sensor
+    %   frame to a vector r with coordinates in the fixed frame according
+    %   to r = rot*p.
+    %
+    % See also:
+    %   quat, q2r, gyro, gyro_fixed, accel, accel_fixed
+    rot    
     % gyro  Gyroscope data in sensor frame [deg/s]
     %   This is a 1x3 array of body angular velocity components represented
     %   in Myo's sensor frame. Fixed frame gyro data is computed and stored
@@ -186,6 +182,7 @@ classdef MyoData < handle
   properties (SetAccess=private,Hidden=true)
     timeIMU_log
     quat_log
+    rot_log
     gyro_log
     gyro_fixed_log
     accel_log
@@ -205,15 +202,6 @@ classdef MyoData < handle
   end
   
   properties (Dependent)
-    % rot  Rotation matrix representing the orientation of Myo
-    %   This is a 3x3 orthonormal matrix. Computed from quat, this rotation
-    %   matrix transforms a 3x1 vector p from coordinates in the sensor
-    %   frame to a vector r with coordinates in the fixed frame according
-    %   to r = rot*p.
-    %
-    % See also:
-    %   quat, q2r, gyro, gyro_fixed, accel, accel_fixed
-    rot
     % rateIMU  Approximate data rate for IMU data
     rateIMU
     % rateEMG  Approximate data rate for EMG data
@@ -221,7 +209,6 @@ classdef MyoData < handle
   end
   
   properties (Dependent,Hidden=true)
-    rot_log
     pose_rest_log
     pose_fist_log
     pose_wave_in_log
@@ -258,11 +245,6 @@ classdef MyoData < handle
     NUM_INIT_SAMPLES = 4
   end
   
-  properties (Access={?MyoMex},Hidden=true)
-    logDataFidIMU
-    logDataFidEMG
-  end
-  
   methods
     %% --- Object Management
     function this = MyoData(countMyos)
@@ -286,23 +268,10 @@ classdef MyoData < handle
     end
     
     function delete(this)
-      % close log files
-      if ~isempty(this.logDataFidIMU)
-        fclose(this.logDataFidIMU);
-      end
-      if ~isempty(this.logDataFidEMG)
-        fclose(this.logDataFidEMG);
-      end
+      
     end
     
     %% --- Setters
-    function set.newDataFcn(this,val)
-      assert(isempty(val)||(isa(val,'function_handle')&&(2==nargin(val))),...
-        'Property newDataFcn must be the empty matrix when not set, or a function handles conforming to the signature newDataFcn(source,eventdata,...) when set.');
-      this.newDataFcn = val;
-    end
-    
-    %% --- Dependent Getters
     function val = get.rateIMU(this)
       val = nan;
       if isempty(this.timeIMU_log), return; end
@@ -312,20 +281,6 @@ classdef MyoData < handle
       val = nan;
       if isempty(this.timeEMG_log), return; end
       val = length(this.timeEMG_log)/range(this.timeEMG_log);
-    end
-    function val = get.rot(this)
-      if isempty(this.quat)
-        val = [];
-        return;
-      end
-      val = this.q2r(this.quat);
-    end
-    function val = get.rot_log(this)
-      if isempty(this.quat_log)
-        val = [];
-        return;
-      end
-      val = this.q2r(this.quat);
     end
     function val = get.pose_rest(this)
       val = this.pose == this.POSE_REST;
@@ -414,6 +369,7 @@ classdef MyoData < handle
       for ii = 1:length(this)
         this(ii).timeIMU_log     = [];
         this(ii).quat_log        = [];
+        this(ii).rot_log         = [];
         this(ii).gyro_log        = [];
         this(ii).gyro_fixed_log  = [];
         this(ii).accel_log       = [];
@@ -442,9 +398,8 @@ classdef MyoData < handle
       for ii=1:length(this)
         this(ii).addDataIMU(data(ii),currTime);
         this(ii).addDataEMG(data(ii),currTime);
-        this(ii).onNewData();
       end
-      
+
     end
     
   end
@@ -453,31 +408,33 @@ classdef MyoData < handle
     
     %% --- Internal Data Management
     function addDataIMU(this,data,currTime)
+
       N = size(data.quat,1);
-      if N==0, return; end
       P = this.NUM_INIT_SAMPLES;
-      assert( ~(isempty(this.prevTimeIMU)&&(N<P)),...
-        'Too few samples received in initialization of log.');
+      isInitSample = isempty(this.prevTimeIMU);
+      if isInitSample&&(N<=P) || N<1, return; end
       
       t = (1:1:N)' * this.IMU_SAMPLE_TIME;
       
       q = data.quat;
+      q = this.qRenorm(q); %renormalize quaterions
+      r = this.q2r(q);
       g = data.gyro;
       a = data.accel;
-      q = this.qRenorm(q); %renormalize quaterions
       gf = this.qRot(q,g);
       af = this.qRot(q,a);
       p = data.pose;
       m = data.arm;
       x = data.xDir;
       
-      if ~isempty(this.prevTimeIMU)
+      if ~isInitSample
         t = t + this.prevTimeIMU;
       else % init time
         t = t - t(end) + currTime;
         % chop off first P data points
         t  =  t(P+1:end,:);
         q  =  q(P+1:end,:);
+        r  =  r(:,:,P+1:end);
         g  =  g(P+1:end,:);
         gf = gf(P+1:end,:);
         a  =  a(P+1:end,:);
@@ -491,6 +448,7 @@ classdef MyoData < handle
       
       this.timeIMU = t(end,:);
       this.quat = q(end,:);
+      this.rot = r(:,:,end);
       this.gyro = g(end,:);
       this.gyro_fixed = gf(end,:);
       this.accel = a(end,:);
@@ -499,22 +457,21 @@ classdef MyoData < handle
       this.arm = m(end,:);
       this.xDir = x(end,:);
       
-      if this.isStreaming, this.pushLogsIMU(t,q,g,gf,a,af,p,m,x); end
-      
+      if this.isStreaming, this.pushLogsIMU(t,q,r,g,gf,a,af,p,m,x); end
+
     end
     
     function addDataEMG(this,data,currTime)
+
       N = size(data.emg,1);
-      if N==0, return; end
       P = this.NUM_INIT_SAMPLES;
-      assert( ~(isempty(this.prevTimeEMG)&&(N<P)),...
-        'Too few samples received in initialization of log.');
+      isInitSample = isempty(this.prevTimeEMG);
+      if isInitSample&&(N<=P) || N<1, return; end
       
       t = (1:1:N)' * this.EMG_SAMPLE_TIME;
       
       e = data.emg./this.EMG_SCALE;
-      
-      if ~isempty(this.prevTimeEMG)
+      if ~isInitSample
         t = t + this.prevTimeEMG;
       else % init time
         t = t - t(end) + currTime;
@@ -526,67 +483,28 @@ classdef MyoData < handle
       
       this.timeEMG = t(end,:);
       this.emg = e(end,:);
-      
+
       if this.isStreaming, this.pushLogsEMG(t,e); end
-      
     end
     
-    function pushLogsIMU(this,t,q,g,gf,a,af,p,m,x)
-      this.timeIMU_log     = [ this.timeIMU_log     ; t  ];
-      this.quat_log        = [ this.quat_log        ; q  ];
-      this.gyro_log        = [ this.gyro_log        ; g  ];
-      this.gyro_fixed_log  = [ this.gyro_fixed_log  ; gf ];
-      this.accel_log       = [ this.accel_log       ; a  ];
-      this.accel_fixed_log = [ this.accel_fixed_log ; af ];
-      this.pose_log        = [ this.pose_log        ; p  ];
-      this.arm_log         = [ this.arm_log         ; m  ];
-      this.xDir_log        = [ this.xDir_log        ; x  ];
-      
-      fid = this.logDataFidIMU;
-      if ~isempty(fid)
-        if 0==ftell(fid)
-          % print header
-          fprintf(fid,...
-            '%s%s%s%s%s%s%s\n',...
-            't[s],',...
-            'q.w[N],q.x[N],q.y[N],q.z[N],',...
-            'gs.x[deg/s],gs.y[deg/s],gs.z[deg/s],',...
-            'gf.x[deg/s],gf.y[deg/s],gf.z[deg/s],',...
-            'as.x[g],as.y[g],as.z[g],',...
-            'af.x[g],af.y[g],af.z[g],',...
-            'pose[enum],arm[enum],xDir[enum]');
-        end
-        % print data
-        data = [t,q,g,gf,a,af,p,m,x]';
-        fprintf(fid,...
-          [repmat('%f,',[1,17]),'%d,%d,%d\n'],data);
-      end
+    function pushLogsIMU(this,t,q,r,g,gf,a,af,p,m,x)
+      this.timeIMU_log     = cat(1, this.timeIMU_log,t);
+      this.quat_log        = cat(1, this.quat_log        ,q  );
+      this.rot_log         = cat(3, this.rot_log         ,r  );
+      this.gyro_log        = cat(1, this.gyro_log        ,g  );
+      this.gyro_fixed_log  = cat(1, this.gyro_fixed_log  ,gf );
+      this.accel_log       = cat(1, this.accel_log       ,a  );
+      this.accel_fixed_log = cat(1, this.accel_fixed_log ,af );
+      this.pose_log        = cat(1, this.pose_log        ,p  );
+      this.arm_log         = cat(1, this.arm_log         ,m  );
+      this.xDir_log        = cat(1, this.xDir_log        ,x  );
     end
     
     function pushLogsEMG(this,t,e)
       this.timeEMG_log   = [ this.timeEMG_log ; t ];
       this.emg_log       = [ this.emg_log     ; e ];
-      
-      fid = this.logDataFidEMG;
-      if ~isempty(fid)
-        if 0==ftell(fid)
-          % print header
-          fprintf(fid,...
-            't,%se.8[N]\n',...
-            sprintf('e.%d[N],',1:7));
-        end
-        % print data
-        data = [t,e]';
-        fprintf(fid,...
-          [repmat('%f,',[1,8]),'%f\n'],data);
-      end
     end
-    
-    function onNewData(this)
-      if ~isempty(this.newDataFcn)
-        this.newDataFcn(this,[]);
-      end
-    end
+
   end
   
   methods (Static=true)
@@ -608,9 +526,10 @@ classdef MyoData < handle
       %   post-multiplication by the inverse of q(kk,:).
       R = zeros(3,3,size(q,1));
       for kk = 1:size(R,3)
-        s = q(1); v = q(2:4)';
+        s = q(kk,1); v = q(kk,2:4)';
         vt = [0,-v(3),v(2);v(3),0,-v(1);-v(2),v(1),0]; % cross matrix
-        R(:,:,kk) = eye(3) + 2*v*v' - 2*v'*v*eye(3) + 2*s*vt;
+         R(:,:,kk) = eye(3) + 2*v*v' - 2*v'*v*eye(3) + 2*s*vt;
+        %R(:,:,kk) = (s^2-2*v'*v)*eye(3) + 2*(v*v' + s*vt);
       end
     end
     function r = qRot(q,p)

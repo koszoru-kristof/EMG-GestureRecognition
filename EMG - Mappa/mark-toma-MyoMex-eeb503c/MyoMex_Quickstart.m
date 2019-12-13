@@ -13,7 +13,6 @@ install_myo_mex; % adds directories to MATLAB search path
 % install_myo_mex save % additionally saves the path
 
 sdk_path = 'C:\myo-sdk-win-0.9.0'; % root path to Myo SDK
-%sdk_path = 'D:\DISCO D\school\PHD\ProgettiPHD\EMG\myo\myo-sdk-win-0.9.0';
 build_myo_mex(sdk_path); % builds myo_mex
 
 %% MyoMex Usage

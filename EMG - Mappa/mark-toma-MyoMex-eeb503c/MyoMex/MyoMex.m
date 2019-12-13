@@ -35,7 +35,7 @@ classdef MyoMex < handle
   % latest batch of samples.
   
   properties
-    newDataFcn
+    deleteFcn = []
   end
   properties (SetAccess = private)
     % myo_data  Data objects for physical Myo devices
@@ -48,13 +48,14 @@ classdef MyoMex < handle
     timerStreamingData
     nowInit
     DEFAULT_STREAMING_FRAME_TIME = 0.040
-    NUM_INIT_SAMPLES = 5
+    NUM_INIT_SAMPLES = 4
+    fatalErrorSource
   end
   
   methods
     
     %% --- Object Management
-    function this = MyoMex(countMyos,logDataFlag)
+    function this = MyoMex(countMyos)
       % MyoMex  Construct a MyoMex object
       %
       % Inputs:
@@ -75,10 +76,6 @@ classdef MyoMex < handle
       if nargin<1 || isempty(countMyos), countMyos = 1; end
       assert(isnumeric(countMyos) && isscalar(countMyos) && any(countMyos==[1,2]),...
         'Input countMyos must be a numeric scalar in [1,2].');
-      
-      if nargin<2, logDataFlag = false; end
-      assert(islogical(logDataFlag) && isscalar(logDataFlag),...
-        'Input logDataFlag must be a logical scalar.');
       
       % we depend on finding resources in the root directory for this class
       class_root_path = fileparts(mfilename('fullpath'));
@@ -108,29 +105,17 @@ classdef MyoMex < handle
       % at this point, myo_mex should be alive!
       this.nowInit = now;
       
-      if logDataFlag
-        for ii=1:countMyos
-          fname=sprintf('MyoData_%d_IMU_%s.csv',ii,datestr(this.nowInit,'yyyy-mm-dd_HH-MM-SS'));
-          assert(~exist(fname,'file'),...
-            'Log file cannot be created because file ''%s'' already exists.',fname);
-          this.myoData(ii).logDataFidIMU=fopen(fname,'a');
-          fname=sprintf('MyoData_%d_EMG_%s.csv',ii,datestr(this.nowInit,'yyyy-mm-dd_HH-MM-SS'));
-          assert(~exist(fname,'file'),...
-            'Log file cannot be created because file ''%s'' already exists.',fname);
-          this.myoData(ii).logDataFidEMG=fopen(fname,'a');
-        end
-      end
-      
       this.startStreaming();
       
     end
     
     function delete(this)
       % delete  Clean up MyoMex instance of MEX function myo_mex
+      this.onDelete();
+      this.stopStreaming();
       for ii = 1:length(this.myoData)
         delete(this.myoData(ii));
       end
-      this.stopStreaming();
       
       [fail,emsg] = MyoMex.myo_mex_delete;
       assert(~fail,...
@@ -139,10 +124,10 @@ classdef MyoMex < handle
     end
     
     %% --- Setters
-    function set.newDataFcn(this,val)
-      assert(isempty(val)||(isa(val,'function_handle')&&(2==nargin(val))),...
-        'Property newDataFcn must be the empty matrix when not set, or a function handles conforming to the signature newDataFcn(source,eventdata,...) when set.');
-      this.newDataFcn = val;
+    function set.deleteFcn(this,val)
+      assert( (isa(val,'function_handle') && 2==nargin(val)) || isempty(val),...
+        'Property ''deleteFcn'' must be a function handle with two input arguments or the empty matrix.');
+      this.deleteFcn = val;
     end
     
     %% --- Dependent Getters
@@ -202,16 +187,27 @@ classdef MyoMex < handle
       %   should manage the MyoMex lifetime around scenarios in which the
       %   Myo is being utilized by the user.
       [fail,emsg,data] = this.myo_mex_get_streaming_data();
-      if fail, this.delete(); end
+      if fail
+        this.fatalErrorSource = 'timerStreamingDataCallback';
+        this.delete();
+      end
       assert(~fail,...
         'myo_mex get_streaming_data failed with message\n\t''%s''\n%s',emsg,...
         sprintf('MyoMex has been cleaned up and destroyed.'));
       this.myoData.addData(data,this.currTime);
-      this.onNewData();
     end
-    function onNewData(this)
-      if ~isempty(this.newDataFcn)
-        this.newDataFcn(this,[]);
+    
+    function onDelete(this)
+      % onDelete  Calls deleteFcn from within the delete method
+      %   Use the fatalErrorSource field of the evt structure to determine
+      %   the cause of object destruction.
+      %
+      %   timerStreamingDataCallback
+      %     Failure in timerStreamingData during call to get_streaming_data
+      evt.fatalErrorSource = this.fatalErrorSource;
+      if ~isempty(this.deleteFcn) && ...
+          isa(this.deleteFcn,'function_handle')
+        this.deleteFcn(this,evt);
       end
     end
   end

@@ -5,15 +5,16 @@ close all
 Data = []
 %%
 
-labels = ["F", "O", "R", "L", "U", "D", "QQ"] %Fist, OpenHand, Right, Left, Up, Down
 
-for k = 1:labels.length()-1
+labels = ["DN", "F", "OH", "R", "L", "SM", "QQ"] %Fist, OpenHand, Right, Left, Up, Down
+
+for k = 1:1
     
     labels(k)        
     disp('START ACQUISITION')
     pause(0.5)
     
-    for trial=1:5
+    for trial=1:1
         %% myo test
 
         MyoData=[];
@@ -38,7 +39,7 @@ for k = 1:labels.length()-1
         %% collect about T seconds of data
             
         disp('Start recording');
-        T = 1; 
+        T = 25; 
         m1 = mm.myoData(1);
         m1.clearLogs();
         m1.startStreaming();
@@ -86,7 +87,7 @@ for k = 1:labels.length()-1
     
     disp(' NEXT GESTURE WILL COME, ATTENTION ! WAITTT')
     disp(labels(k+1))
-    pause(4)
+    pause(10)
     
 end
 
@@ -95,6 +96,6 @@ end
 
 Dataset = table();
 Dataset{:,:} = Data;
-writetable(Dataset,'EMG_5sec_KK05.csv','WriteRowNames',true)
+writetable(Dataset,'EMG3_1ac25sec_ALE1.csv','WriteRowNames',true)
 
 
