@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class HelicopterController : MonoBehaviour
@@ -33,6 +34,11 @@ public class HelicopterController : MonoBehaviour
 
             _engineForce = value;
         }
+    }
+
+    internal void SetIsZMQused(bool useZMQ)
+    {
+        throw new NotImplementedException();
     }
 
     private Vector2 hMove = Vector2.zero;

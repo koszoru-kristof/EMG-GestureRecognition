@@ -207,6 +207,11 @@ namespace NewHelicopter
 
         }
 
+        public void SetIsZMQused(bool val)
+        {
+            isZMQ_Joystick = val;
+        }
+
         private float GetInput(string input)
         {
             if (isVirtualJoystick)
