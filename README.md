@@ -16,8 +16,10 @@ External resources links:
 [Virtual Joystick](https://assetstore.unity.com/packages/tools/input-management/simple-input-system-113033)
 
 
-## Overleaf documentation
-All the documentation will be in a folder called "Documentetion". We will put there all the images and document beckups.
+## Report documentation
+
+All the documentation will be in a folder called "report_documentation". We will put there all the images and document beckups.
+The report will be written using Overleaf.
 
 [Overleaf link](https://www.overleaf.com/project/5df672929f011e00014a772e)
 
