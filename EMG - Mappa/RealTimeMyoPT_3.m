@@ -4,7 +4,7 @@ clear;
 clc;
 
 % labels = ["F", "R", "L", "U", "D", "OK"];
-labels = ["RX", "F", "OH", "R", "L", "SM"];
+labels = ["RX", "F", "OH", "R", "L", "DN"];
 
 %path(pathdef);
 clc;
@@ -24,7 +24,7 @@ end
 % bool = pub.publish(topic, 'U');
 
 %% Load the trained model
-load('training/training_ALE-RFOHRLSM-2layer.mat');
+load('training/training_ALE-RFOHRLDW-2layer.mat');
 
 %% Start acquisition
 
@@ -90,7 +90,7 @@ for trial = 1:50
     MyoData = MyoData';
 
 %% Simulation of MyoData
-
+%{
 
 
 clc
@@ -142,7 +142,7 @@ else
     "FIRST"
 end
 
-
+%}
 %% Convert datas to cells
 
 X = {MyoData};
@@ -189,15 +189,15 @@ X = X_fin';
 
     
 %%
-pause(1);
-end
+%pause(1);
+
 %% Init console
 
 %close all;
  
  
    
-   labels = ["RX", "F", "OH", "R", "L", "SM"];
+   %labels = ["RX", "F", "OH", "R", "L", "SM"];
    msg_labels = ["OK", "F", "U", "R", "L", "D"];
    
    index = find(labels(1,:) == Prediction);
@@ -213,7 +213,7 @@ end
 
 
 end
-
+%end
 %}
 
 
