@@ -28,7 +28,7 @@ Data1 = FinalData; % chande data wich we are working with
 %%
 % KK datas
 
-load('data/EMG3_KK_DN_1.mat');
+load('data/EMG3_KK_DN_2.mat');
 Data4 = Data;
 Data4(9,:) = 6;
 
@@ -252,12 +252,12 @@ net = trainNetwork(X_train,Y_train,layers,options);
 
 %% Save training datas
 
-save('training/training_ALE-KK-MAX-MARCP-RFOHRLDW-2layer.mat','net')
+save('training/training_ALE-RFOHRLDW-2layer.mat','net')
 
 
 %% Test the net
 
-load("training/training_ALE-KK-MAX-MARCP-RFOHRLDW-2layer.mat")
+load("training/training_ALE-KK-MAT(6.6)_-FRLOK-1layer.mat")
 
 %%
 
