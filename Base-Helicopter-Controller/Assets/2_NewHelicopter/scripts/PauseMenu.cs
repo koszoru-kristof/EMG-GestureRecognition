@@ -7,6 +7,9 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private GameObject pauseMenuUI;
     [SerializeField] private bool isPaused;
 
+
+    [SerializeField] private GameObject OverlayUI;
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -32,6 +35,7 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 0;
         AudioListener.pause = true;
         pauseMenuUI.SetActive(true);
+        OverlayUI.SetActive(false);
     }
 
     public void DeactivateMenu()
@@ -40,6 +44,7 @@ public class PauseMenu : MonoBehaviour
         AudioListener.pause = false;
         pauseMenuUI.SetActive(false);
         isPaused = false;
+        OverlayUI.SetActive(true);
     }
 
     public void QuitGame()

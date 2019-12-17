@@ -7,9 +7,6 @@ The gesture recognition is based on a Machine Learning Classifier developed in m
 ## Unity Game Development - Based on [Base Helicopter Controller](https://github.com/suncube/Base-Helicopter-Controller)
 [![AssetStore](https://img.shields.io/badge/-AssetStore-lightgrey.svg)](https://assetstore.unity.com/publishers/14506)
 
-
-
-
 External resources links:
 
 [Ground & Environment](https://assetstore.unity.com/packages/3d/vegetation/lowpoly-trees-and-rocks-88376)
@@ -17,3 +14,12 @@ External resources links:
 [Helicopter models](https://assetstore.unity.com/packages/3d/vehicles/air/low-poly-helicopters-pack-free-121151)
 
 [Virtual Joystick](https://assetstore.unity.com/packages/tools/input-management/simple-input-system-113033)
+
+
+## Report documentation
+
+All the documentation will be in a folder called "report_documentation". We will put there all the images and document beckups.
+The report will be written using Overleaf.
+
+[Overleaf link](https://www.overleaf.com/3864544272mfmwrhfpypbt)
+
