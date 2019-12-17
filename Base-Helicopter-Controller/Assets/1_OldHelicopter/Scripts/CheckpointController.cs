@@ -2,11 +2,16 @@
 using System.Collections;
 using System.Linq;
 using System.Security.Policy;
+using UnityEngine.UI;
 
 public class CheckpointController : MonoBehaviour
 {
     public Checkpoint[] CheckpointsList;
     public LookAtTargetController Arrow;
+
+    public Text scoreText;
+    private int win;
+    public Text winText;
 
     private Checkpoint CurrentCheckpoint;
     private int CheckpointId;
@@ -16,10 +21,15 @@ public class CheckpointController : MonoBehaviour
 	{
         if (CheckpointsList.Length==0) return;
 
-	    for (int index = 0; index < CheckpointsList.Length; index++)
+        CheckpointId = 0;
+        scoreText.text = "Score " + CheckpointId.ToString();
+
+        winText.text = "";
+
+        for (int index = 0; index < CheckpointsList.Length; index++)
             CheckpointsList[index].gameObject.SetActive(false);
 
-	    CheckpointId = 0;
+
         SetCurrentCheckpoint(CheckpointsList[CheckpointId]);
 	}
 
@@ -40,6 +50,13 @@ public class CheckpointController : MonoBehaviour
     private void CheckpointActivated()
     {
         CheckpointId++;
+        scoreText.text = "Score: " + CheckpointId.ToString();
+
+        if (CheckpointId == 7 )
+        {
+            winText.text = "You won!!";
+        }
+
         if (CheckpointId >= CheckpointsList.Length)
         {
             CurrentCheckpoint.gameObject.SetActive(false);

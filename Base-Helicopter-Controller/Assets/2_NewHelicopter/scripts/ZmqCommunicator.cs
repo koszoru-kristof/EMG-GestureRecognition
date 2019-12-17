@@ -193,7 +193,8 @@ public class ZmqCommunicator : MonoBehaviour {
         byte[] incomingMessage = new byte[1];
         for (; ; )
         {
-            // *********** read the message ***********
+            // *********** read the message **********
+
             if (TryGetLastMessage(ref incomingMessage))
                 action(incomingMessage);
 

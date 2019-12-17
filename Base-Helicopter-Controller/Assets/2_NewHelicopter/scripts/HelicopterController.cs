@@ -12,12 +12,13 @@ namespace NewHelicopter
 
         public static HelicopterController Instance;
 
+        public Text directionText;
+        private string direction;
 
         public string ip; // tcp://127.0.0.1:5000
         public float updateInterval;
 
         private string lastAction = "F";
-
 
         private string horizontalAxis = "Horizontal";
         private string verticalAxis = "Vertical";
@@ -25,7 +26,6 @@ namespace NewHelicopter
 
         [Header("Inputs")]
         public bool isVirtualJoystick = false;
-
         public bool isZMQ_Joystick = false;
 
         [Header("View")]
@@ -76,9 +76,20 @@ namespace NewHelicopter
                 return;
             }
 
+            if (isZMQ_Joystick)
+            {
+                direction = " ";
+                directionText.text = "Action: " + direction;
+            }
+            else
+            {
+                directionText.text = " ";
+            }
+
             zmqSub = gameObject.AddComponent<ZmqCommunicator>();
 
         }
+
         private void OnEnable()
         {
             zmqSub.StartSubscriber(ip, updateInterval, ReadMessage);
@@ -92,14 +103,46 @@ namespace NewHelicopter
             //zmqSub.StartSubscriber(ip, updateInterval, ReadMessage);
         }
 
-        void ReadMessage(byte[] bytes)
+        void ReadMessage(byte[] bytes) // read message using zmq from matlab
         {
             string msg = System.Text.Encoding.ASCII.GetString(bytes);
             Debug.Log("Received: " + msg);
 
-            //Todo: check the msg if correct 
+            //Todo: check the msg if correct
             lastAction = msg;
-                                 
+
+
+            if (msg == "F")
+            {
+                direction = "Go forward";
+                directionText.text = "Action: " + direction;
+            }
+            else if(msg == "OK")
+            {
+                direction = "Stay there";
+                directionText.text = "Action: " + direction;
+            }
+            else if(msg == "D")
+            {
+                direction = "Go Down";
+                directionText.text = "Action: " + direction;
+            }
+            else if(msg == "U")
+            {
+                direction = "Go up";
+                directionText.text = "Action: " + direction;
+            }
+            else if(msg == "L")
+            {
+                direction = "Tourn left";
+                directionText.text = "Action: " + direction;
+            }
+            else if (msg == "R")
+            {
+                direction = "Tourn right";
+                directionText.text = "Action: " + direction;
+            }
+
         }
 
         private float distanceToGround ;
@@ -165,6 +208,7 @@ namespace NewHelicopter
             HelicopterModel.transform.localRotation = Quaternion.Euler(hTilt.y, HelicopterModel.transform.localEulerAngles.y, -hTilt.x);
         }
 
+        /*
         private void ProcessingMobileInputs()
         {
             if (!IsOnGround)
@@ -178,32 +222,32 @@ namespace NewHelicopter
                 hMove.y = 0;
             }
 
-            if (Input.GetAxis(jumpButton) > 0)
+            if (Input.GetAxis(jumpButton) > 0 && EngineForce <= 50)
             {
                 EngineForce += 0.1f;
             }
             else
-            if (Input.GetAxis(jumpButton) < 0)
+            if (Input.GetAxis(jumpButton) < 0 && EngineForce >= 7)
             {
                 EngineForce -= 0.12f;
             }
         }
-
+        */
 
         private void ProcessingInputs()
         {
             if (!IsOnGround)
             {
-                hMove.x = GetInput( horizontalAxis);
-                hMove.y = GetInput( verticalAxis);
+                // orizzontal mouvements
+                hMove.x = GetInput( horizontalAxis); // move on z axes
+                hMove.y = GetInput( verticalAxis);   // move on y axes
 
             }
 
-            if (GetInput(jumpButton) > 0)
-                EngineForce += 0.1f;
-            else
-            if (GetInput(jumpButton) < 0)
-                EngineForce -= 0.12f;
+            if (GetInput(jumpButton) > 0 && EngineForce <= 50)
+                EngineForce += 0.1f; // up 
+            else if (GetInput(jumpButton) < 0 && EngineForce >= 8)
+                EngineForce -= 0.12f; // down
 
         }
 
@@ -214,26 +258,27 @@ namespace NewHelicopter
 
         private float GetInput(string input)
         {
-            if (isVirtualJoystick)
-                return SimpleInput.GetAxis(input);
-            else if (isZMQ_Joystick)
+            if (isZMQ_Joystick)
                 return Evaluate_EMG_Input(input);
+            else if (isVirtualJoystick)
+                return SimpleInput.GetAxis(input);
             else
                 return Input.GetAxis(input);
         }
-        
-        private float Evaluate_EMG_Input(string input)
-        {
 
-            if(input == horizontalAxis && lastAction == "R")
+        private float Evaluate_EMG_Input(string input)
+        {   
+            if (input == horizontalAxis && lastAction == "R")
             {
                 return 0.5f;
 
-            }else if(input == horizontalAxis && lastAction == "L")
-            {
-                return -0.5f;
+            }
+            else if(input == horizontalAxis && lastAction == "L")
+           {
+               return -0.5f;
 
-            }else if(input == verticalAxis && lastAction == "F")
+            }
+            else if(input == verticalAxis && lastAction == "F")
             {
                 return 1.0f;
             }
@@ -245,7 +290,6 @@ namespace NewHelicopter
             {
                 return -1.0f;
             }
-
             else if (lastAction == "OK")
             {
                 return 0.0f;
@@ -253,7 +297,7 @@ namespace NewHelicopter
 
             return 0.0f;
         }
-
+  
 
         private void OnCollisionEnter()
         {
@@ -266,6 +310,7 @@ namespace NewHelicopter
         }
 
 //TODO temp move to events
+
         private void Visualize()
         {
             if (DustAirController != null)

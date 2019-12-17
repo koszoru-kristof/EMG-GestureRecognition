@@ -8,7 +8,7 @@ public class Checkpoint : MonoBehaviour
     public Action CheckpointActivated; 
 	// Use this for initialization
 	void Start () {
-	
+	    
 	}
 	
 	// Update is called once per frame
@@ -20,6 +20,9 @@ public class Checkpoint : MonoBehaviour
     {
         Debug.Log("Activate");
         if (CheckpointActivated != null)
+        {
             CheckpointActivated();
+
+        }
     }
 }

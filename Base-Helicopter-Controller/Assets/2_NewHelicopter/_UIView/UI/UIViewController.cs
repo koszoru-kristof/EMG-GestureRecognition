@@ -14,6 +14,8 @@ namespace NewHelicopter
         public Text HeigthUpView;
         public Text HeigthView;
         public Text EngineForceView;
+        public Text scoreText;
+        public Text directionText;
 
         public static UIViewController runtime;
 
