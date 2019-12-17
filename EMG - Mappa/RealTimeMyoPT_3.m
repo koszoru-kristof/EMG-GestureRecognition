@@ -91,7 +91,7 @@ for trial = 1:50
 
 %% Simulation of MyoData
 
-%{
+
 
 clc
 clear all
@@ -99,8 +99,8 @@ close all
 
 labels = ["F", "R", "L", "OK"];
 
-load('training/training_ALE-KK-MAT(6.6)_-FRLOK.mat');
-load('data/EMG_MAX_complessivi_2.2_FRLUDOK.mat');
+load('training/training_ALE-RFOHRLSM-2layer.mat');
+load('data/EMG2_ALE_complessivi_1_RXFOHRLSM.mat');
 
 % MyoData is a vector 8 x 400(data/s)*time(s) 25 sec -> 8x60000
 
@@ -112,7 +112,7 @@ Data = FinalData; % change data wich we are working with
 
 temp = cellaF(Data, interest_actions);
 Data = temp;
-%%
+
 
 while(1)
     
@@ -141,7 +141,7 @@ else
     MyoData = MyoDataF;
     "FIRST"
 end
-%}
+
 
 %% Convert datas to cells
 
@@ -186,14 +186,15 @@ X = X_fin';
         i = i + 1;
     %    end
     %end
+
     
 %%
-% pause(1);
-
+pause(1);
+end
 %% Init console
 
 %close all;
-   
+ 
  
    
    labels = ["RX", "F", "OH", "R", "L", "SM"];
@@ -213,6 +214,6 @@ X = X_fin';
 
 end
 
-
+%}
 
 
