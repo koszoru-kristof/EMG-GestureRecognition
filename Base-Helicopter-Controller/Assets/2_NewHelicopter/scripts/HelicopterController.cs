@@ -13,7 +13,7 @@ namespace NewHelicopter
         public static HelicopterController Instance;
 
         public Text directionText;
-        private string direction;
+        private string direct;
 
         public string ip; // tcp://127.0.0.1:5000
         public float updateInterval;
@@ -63,6 +63,9 @@ namespace NewHelicopter
             }
         }
 
+
+        Transform targetFin;
+        Transform targetEli;
         void Awake()
         {
 
@@ -78,8 +81,8 @@ namespace NewHelicopter
 
             if (isZMQ_Joystick)
             {
-                direction = " ";
-                directionText.text = "Action: " + direction;
+                direct = " ";
+                directionText.text = "Action: " + direct;
             }
             else
             {
@@ -87,7 +90,8 @@ namespace NewHelicopter
             }
 
             zmqSub = gameObject.AddComponent<ZmqCommunicator>();
-
+            targetFin = GameObject.FindGameObjectWithTag("Finish").transform;
+            targetEli = GameObject.FindGameObjectWithTag("Elicopther").transform;
         }
 
         private void OnEnable()
@@ -114,35 +118,35 @@ namespace NewHelicopter
 
             if (msg == "F")
             {
-                direction = "Go forward";
-                directionText.text = "Action: " + direction;
+                direct = "Go forward";
+                directionText.text = "Action: " + direct;
             }
             else if(msg == "OK")
             {
-                direction = "Stay there";
-                directionText.text = "Action: " + direction;
+                direct = "Stay there";
+                directionText.text = "Action: " + direct;
             }
             else if(msg == "D")
             {
-                direction = "Go Down";
-                directionText.text = "Action: " + direction;
+                direct = "Go Down";
+                directionText.text = "Action: " + direct;
             }
             else if(msg == "U")
             {
-                direction = "Go up";
-                directionText.text = "Action: " + direction;
+                direct = "Go up";
+                directionText.text = "Action: " + direct;
             }
             else if(msg == "L")
             {
-                direction = "Tourn left";
-                directionText.text = "Action: " + direction;
+                direct = "Tourn left";
+                directionText.text = "Action: " + direct;
             }
             else if (msg == "R")
             {
-                direction = "Tourn right";
-                directionText.text = "Action: " + direction;
+                direct = "Tourn right";
+                directionText.text = "Action: " + direct;
             }
-
+            timeSinceMessage = 0;
         }
 
         private float distanceToGround ;
@@ -162,6 +166,13 @@ namespace NewHelicopter
         private Vector2 hTilt = Vector2.zero;
         private float hTurn = 0f;
         public bool IsOnGround = true;
+        private int goHome;
+        float timeSinceMessage = 0f;
+        float refer = 0f;
+        float EngineForceRef;
+        Vector3 myVector;
+
+
 
         void FixedUpdate()
         {
@@ -171,6 +182,48 @@ namespace NewHelicopter
             TiltProcess();
 
             Visualize();
+
+            timeSinceMessage += Time.fixedDeltaTime;
+            if(timeSinceMessage <= 5f)
+            {
+                EngineForceRef = EngineForce;
+                refer = Vector3.Distance(transform.position, targetFin.position);
+            }
+
+
+            if (timeSinceMessage > 5f && Vector3.Distance(transform.position, targetFin.position) > 5f)
+            {
+                //go home
+                Debug.Log("Going home");
+
+                transform.position = Vector3.MoveTowards(transform.position, targetFin.position, 0.15f);
+
+
+                if (transform.position.x - targetFin.position.x > 5f || transform.position.z - targetFin.position.z > 5f)
+                {
+                    if (EngineForce > 10)
+                    {
+                        myVector = new Vector3(0.0f, transform.position.y, 0.0f);
+                        transform.LookAt(targetFin.position + myVector);
+                    }
+                    
+                    if (EngineForce > 10)
+                        EngineForce = Vector3.Distance(transform.position, targetFin.position) / refer * EngineForceRef; // Decrise velocity
+                    else
+                        EngineForce = 10;
+                }
+
+                else if(EngineForce > 0.5f) // Shot down engine
+                {
+                    Debug.Log(EngineForce);
+
+                    EngineForce -= 0.05f;
+
+                    Debug.Log(EngineForce);
+                }
+               
+
+            }
         }
 
         private void MoveProcess()
@@ -185,6 +238,7 @@ namespace NewHelicopter
         {
             // to ground distance
             RaycastHit hit;
+
             var direction = transform.TransformDirection(Vector3.down);
             var ray = new Ray(transform.position, direction);
             if (Physics.Raycast(ray, out hit, 300, GroundMaskLayer))
@@ -242,12 +296,24 @@ namespace NewHelicopter
                 hMove.x = GetInput( horizontalAxis); // move on z axes
                 hMove.y = GetInput( verticalAxis);   // move on y axes
 
+                if (Mathf.Abs(hMove.x) > 0 || Mathf.Abs(hMove.y) < 0) 
+                {
+                    timeSinceMessage = 0;
+                }
             }
 
             if (GetInput(jumpButton) > 0 && EngineForce <= 50)
-                EngineForce += 0.1f; // up 
+            {
+                EngineForce += 0.1f; // up
+                timeSinceMessage = 0;
+            }
             else if (GetInput(jumpButton) < 0 && EngineForce >= 8)
+            {
                 EngineForce -= 0.12f; // down
+                timeSinceMessage = 0;
+
+            }
+
 
         }
 

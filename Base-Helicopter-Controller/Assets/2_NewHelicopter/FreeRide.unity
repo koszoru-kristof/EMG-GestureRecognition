@@ -6389,7 +6389,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 444.10876, y: 250}
+  m_AnchoredPosition: {x: 444.1084, y: 250}
   m_SizeDelta: {x: 588, y: 331}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &549487330
@@ -12296,7 +12296,7 @@ GameObject:
   - component: {fileID: 1072598088}
   m_Layer: 0
   m_Name: HelicopterModel
-  m_TagString: Untagged
+  m_TagString: Elicopther
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -12355,7 +12355,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1072598087}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.6539999, z: 1.19}
+  m_LocalPosition: {x: 0, y: 0.39, z: 1.19}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 919685394}
@@ -20059,7 +20059,7 @@ GameObject:
   - component: {fileID: 1756744413}
   m_Layer: 0
   m_Name: HelicopterPlatform
-  m_TagString: Untagged
+  m_TagString: Finish
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -23885,10 +23885,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 113920, guid: bf61435cf491ea442bbeea12e848d21e, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 22421092, guid: bf61435cf491ea442bbeea12e848d21e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -23972,6 +23968,10 @@ PrefabInstance:
     - target: {fileID: 22421092, guid: bf61435cf491ea442bbeea12e848d21e, type: 3}
       propertyPath: m_Pivot.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 113920, guid: bf61435cf491ea442bbeea12e848d21e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11414292, guid: bf61435cf491ea442bbeea12e848d21e, type: 3}
       propertyPath: TargetPlayer
