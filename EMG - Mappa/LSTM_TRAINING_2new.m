@@ -6,27 +6,29 @@ clear all
 class = ["RX", "F", "OH", "R", "L", "DN"]; % Which class we got in the data file we upload 
 
 
-Data = [];
+Data = []; 
 numberacquFILE = 0; % Starting from 0 the number of acquisition, if you don't load files
 
 %% Load files
 
-% Ale datas
+% Alessandro datas
+
 load('data/EMG2_ALE_DN_1_DN.mat');
 Data2 = Data;
 Data2(9,:) = 6;
 
 load('data/EMG2_ALE_complessivi_1_RXFOHRLSM.mat');
 Data1 = Data;
-position = [];
+
+% We want to remove an action from the second file adding a new one. We
+% acquire the down later
 
 interest_actions = [1, 2, 3, 4, 5];
-
 FinalData = select(numberacquFILE, 25, interest_actions, Data1);
-Data1 = FinalData; % chande data wich we are working with
 
-%%
-% KK datas
+Data1 = FinalData;
+
+% Kristóf datas
 
 load('data/EMG3_KK_DN_1.mat');
 Data4 = Data;
@@ -41,96 +43,69 @@ interest_actions = [1, 2, 3, 4, 5];
 FinalData = select(numberacquFILE, 25, interest_actions, Data3);
 Data3 = FinalData; % chande data wich we are working with
 
-%% 
+% Massimiliano datas
 
-% Max datas
 load('data/EMG3_Max_RxFOhRLDn1.mat');
 Data5 = Data;
 
-% Marco datas
-load('data/EMG3_Marco_RxFOhRLDn1.mat');
-Data6 = Data;
+% Put all the data together
 
-%%
-Data = [Data1 Data2 Data3 Data4 Data5 Data6];
+Data = [Data1 Data2 Data3 Data4 Data5]; 
 
-%% Load Dataset
+%% If necessary Load Dataset from csv file
 
-[Data, numberacquFILE] = writedata(25, 1, 6, 'EMG3_1ac25sec_MAR', 1, Data, numberacquFILE);
-% [Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_MAT', 2, Data, numberacquFILE);
-% [Data, numberacquFILE] = writedata(25, 1, 6, 'data/EMG_1ac25sec_KK', 1, Data, numberacquFILE);
+[Data, numberacquFILE] = writedata(25, 1, 1, 'EMG2_1ac25sec_ALE1-06', 1, Data, numberacquFILE);
 
-% [Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_1ac25sec_KK', 2, Data, numberacquFILE);
-%[Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_5ac1sec_Ting', 4, Data, numberacquFILE);
-% [Data, numberacquFILE] = writedata(1, 5, 6, 'data/EMG_5ac1sec_MAT', 3, Data, numberacquFILE);
-
-
-filename = append('data/EMG3_Marco_RxFOhRLDn', string(numberacquFILE),'.mat')
+filename = append('data/EMG2_ALE_DN_1_DN', string(numberacquFILE),'.mat');
 
 save(filename,'Data');
 
-
-%}
 %%
-interest_actions = [1, 2, 3, 4, 5, 6];
+
+interest_actions = [1, 2, 3, 4, 5, 6]; % Number of the action
 
 n_of_classes = length(interest_actions);
 
-
-%interest_actions = [1, 2, 3, 6];
-
-% interest_actions = [1, 2, 3, 6]; % [F, R, L, OK]
-
+% If you want to select some actions from the file.
 FinalData = select(numberacquFILE, 25, interest_actions, Data);
-Data = FinalData; % chande data wich we are working with
+Data = FinalData;
 
 %% Create some cells from arrays
 
 temp = cellaF(Data, interest_actions);
 Data = temp;
 
-%% Define X/Y
+% Define X/Y -> sensor aplitude / action
 
 X = {};
 Y = [];
 
-
-for ii = 1:length(Data)
-    
-    temp = Data{ii,1};
-    
+for ii = 1:length(Data)   
+    temp = Data{ii,1};    
     X{ii,1} = temp(1:8, 1:end);
-    Y(ii,1) = temp(9, 1)';
-    
+    Y(ii,1) = temp(9, 1)';   
 end
 
+clear Data1 Data2 Data3 Data4 Data5 FinalData;
 
-%%
 X_ = {};
 Y_ = [];
-
 X_fin = {};
 Y_fin = [];
 
-for ii = 1:length(X)   
-    
+for ii = 1:length(X)      
     % how many elements each cell
     temp = X{ii,1};
-
     n_acquisition = 10;
-    leng = round(length(X{ii,1})/(n_of_classes * n_acquisition) - 0.5);
-    
-    n_cells = round(leng*n_of_classes - 0.5);
-    
+    leng = round(length(X{ii,1})/(n_of_classes * n_acquisition) - 0.5);   
+    n_cells = round(leng*n_of_classes - 0.5);   
     for jj = 0:(leng-1)
         num = jj*ii+1;
         X_{jj+1,1} = temp(1:8, 1 + n_acquisition*(jj):n_acquisition*(jj+1));
         Y_(jj+1) = Y(ii);  
-    end
-    
+    end    
     X_fin = {X_fin{:,:} X_{:,1}};
-    Y_fin = [Y_fin Y_];
-    
+    Y_fin = [Y_fin Y_];   
 end
 
 X_ = X_fin';
@@ -138,26 +113,22 @@ Y_ = Y_fin';
 
 %% Train and Test
 
+% Define training and test part
 X_test = {};
 Y_test = [];
-
 test = [];
 
 % How many test elements
-
 tot = leng * n_of_classes;
-jump = 6; % every two elements a test
+jump = 6; % every six elements a test
 num_test = round(tot/jump - 0.5);
 jj = 1;
 
-for ii = 1:(num_test)
-   
+for ii = 1:(num_test-1)
 	X_test{jj,1} = X_{jump*(ii), 1}; % X_test{jj,1} = X_(salto*(ii), 1);
-    test = [test jump*(ii)];
-	Y_test(jj) = Y_(jump*(ii));  
-    
-    jj = jj + 1;
-   
+    test = [test jump*(ii)]; % Save the position of the test cell
+	Y_test(jj) = Y_(jump*(ii));      
+    jj = jj + 1;  
 end
 
 Y_test = Y_test';
@@ -166,15 +137,12 @@ Y_test = Y_test';
 
 % Invert test vector, in order to delete the X elements starting from le end
 temp = [];
-
 for i = 1:length(test)
     temp = [test(1,i) temp];    
 end
-
 test = temp;
 
 % Delete X elements already present in test cell. Be careful, X change
-
 for i = 1:length(test)
     X_(test(1,i)) = [];  
     Y_(test(1,i)) = [];
@@ -202,19 +170,17 @@ Y_test = temp2';
 Y_train = categorical(Y_train);
 Y_test  = categorical(Y_test);
 
-%% Clear Workspace and plot the first Observation
-
-clc
-clear FinalData numberacqu temp Data ii n jj...
-    X_fin Y_fin X Y salto leng num_test tot ...
-    X_ Y_ test test1 num n_part i temp1 temp2...
-    Data1 Data2 Data3 Data4 Data5
+%% Clear Workspace and plot Observation s
 
 figure
-plot(X_train{1}')
-title("Training Observation 1")
+hold on
+plot(X_train{1}', 'linestyle','-','linewidth',1)
+grid on 
+xlabel('Sample')
+ylabel('Amplitude')
 numFeatures = size(X_train{1},1);
-legend("Feature " + string(1:numFeatures),'Location','northeastoutside')
+legend("Sensor " + string(1:numFeatures),'Location','northeastoutside')
+hold off
 
 %% Define Training algorithm
 
@@ -236,7 +202,7 @@ layers = [ ...
 
 % Options
 
-maxEpochs = 100;
+maxEpochs = 50;
 miniBatchSize = 27;
 
 options = trainingOptions('adam', ...
@@ -252,14 +218,12 @@ net = trainNetwork(X_train,Y_train,layers,options);
 
 %% Save training datas
 
-save('training/training_ALE-KK-MAX-MARCP-RFOHRLDW-2layer.mat','net')
+save('training/training_ALE-KK-MAX-RFOHRLDW-2layer.mat','net')
 
 
-%% Test the net
+%% Test the net and plot the confusion matrix
 
-load("training/training_ALE-KK-MAX-MARCP-RFOHRLDW-2layer.mat")
-
-%%
+load("training/training_ALE-KK-MAX-RFOHRLDW-2layer.mat")
 
 miniBatchSize = 27;
 
@@ -267,7 +231,6 @@ YPred = classify(net, X_test,'MiniBatchSize',miniBatchSize);
 
 acc = sum(YPred == Y_test)./numel(Y_test)
 
-% Confusion matrix
 C = confusionmat(Y_test,YPred)
 
 trace(C)

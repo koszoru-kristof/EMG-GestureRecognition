@@ -2,9 +2,8 @@ clc
 clear all
 close all
 
-Data = []
+Data = [];
 %%
-
 
 labels = ["RX", "F", "OH", "R", "L", "DN",  "QQ"] %Fist, OpenHand, Right, Left, Up, Down
 
@@ -14,49 +13,52 @@ for k = 1:length(labels) - 1
     disp('START ACQUISITION')
     pause(0.5)
     
-    for trial=1:1
-        %% myo test
+    %% myo test
 
-        MyoData=[];
-        Time_=[];
+    MyoData =[];
+    Time_   =[];
 
-        %% create myo mex (ONLY FIRST TIME!!!!)
+    %% create myo mex (ONLY FIRST TIME!!!!)
     
-        install_myo_mex; % adds directories to MATLAB search path
-        dataset=[];
+    install_myo_mex; % adds directories to MATLAB search path
+    dataset=[];
 
-        act=0;
-        %%for labeIndex=1:1  %length(labels)
-        close all
-        %Action=labels(labeIndex);
-        Features = [];
+    act=0;
+    %%for labeIndex=1:1  %length(labels)
+    close all
+    %Action=labels(labeIndex);
+    Features = [];
         
-        %% generate myo instance
-        install_myo_mex;
-        mm = MyoMex(1);    
-        pause(0.1);      
+    %% generate myo instance
+    install_myo_mex;
+    mm = MyoMex(1);    
+    pause(0.1);      
 
-        %% collect about T seconds of data
+    %% collect about T seconds of data
             
-        disp('Start recording');
-        T = 25; 
-        m1 = mm.myoData(1);
-        m1.clearLogs();
-        m1.startStreaming();
-        pause(T);
-        %figure('units','normalized','outerposition',[0 0 1 1])
-        initialTime = m1.timeEMG;
-
-        while m1.timeEMG-initialTime < T
-    %             if ~isempty(m1.timeEMG_log)
-    %                 for i=1:8
-    %                 subplot(3,3,i);
-    %                 plot(m1.timeEMG_log - m1.timeEMG_log(1),m1.emg_log(:,i)); title(sprintf("%s%s%d", Action,"sensor", i));
-    %                 end
-    %             end
-                %pause(0.001);
+    disp('Start recording');
+    T = 25; 
+    m1 = mm.myoData(1);
+    m1.clearLogs();
+    m1.startStreaming();
+    pause(T);
+    %figure('units','normalized','outerposition',[0 0 1 1])
+    initialTime = m1.timeEMG;
+    
+    %%%%
+    
+    % Plot Part
+    while m1.timeEMG-initialTime < T
+    	if ~isempty(m1.timeEMG_log)
+    	for i=1:8
+            subplot(3,3,i);
+            plot(m1.timeEMG_log - m1.timeEMG_log(1),m1.emg_log(:,i)); title(sprintf("%s%s%d", Action,"sensor", i));
         end
-         
+        end
+        pause(0.001);
+    end
+    
+    %%%%
         clear initialTime;
         m1.stopStreaming();
          
@@ -76,9 +78,6 @@ for k = 1:length(labels) - 1
         Data    = [Data, newData];
     
         labels(k)
-    
-
-    end
     
 
     filename = append('EMG_1ac25sec_ALE1-06', labels(k), '.mat' )

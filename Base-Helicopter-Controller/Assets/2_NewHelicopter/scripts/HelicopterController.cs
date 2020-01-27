@@ -66,6 +66,7 @@ namespace NewHelicopter
 
         Transform targetFin;
         Transform targetEli;
+
         void Awake()
         {
 
@@ -107,10 +108,21 @@ namespace NewHelicopter
             //zmqSub.StartSubscriber(ip, updateInterval, ReadMessage);
         }
 
+        public float count = 0f;
+
         void ReadMessage(byte[] bytes) // read message using zmq from matlab
         {
             string msg = System.Text.Encoding.ASCII.GetString(bytes);
             Debug.Log("Received: " + msg);
+
+            if (msg == lastAction)
+            {
+                count += 1f;
+            }
+            else
+            {
+                count = 0f;
+            }
 
             //Todo: check the msg if correct
             lastAction = msg;
@@ -191,37 +203,42 @@ namespace NewHelicopter
             }
 
 
-            if (timeSinceMessage > 5f && Vector3.Distance(transform.position, targetFin.position) > 5f)
+            if (timeSinceMessage > 5f && Vector3.Distance(transform.position, targetFin.position) > 2f || count > 5f && Vector3.Distance(transform.position, targetFin.position) > 2f)
             {
-                //go home
+                //Go home
                 Debug.Log("Going home");
 
                 transform.position = Vector3.MoveTowards(transform.position, targetFin.position, 0.15f);
 
 
-                if (transform.position.x - targetFin.position.x > 5f || transform.position.z - targetFin.position.z > 5f)
+                if (transform.position.x - targetFin.position.x > 2f || transform.position.z - targetFin.position.z > 2f)
                 {
                     if (EngineForce > 10)
                     {
                         myVector = new Vector3(0.0f, transform.position.y, 0.0f);
                         transform.LookAt(targetFin.position + myVector);
                     }
-                    
+
                     if (EngineForce > 10)
+                    {
                         EngineForce = Vector3.Distance(transform.position, targetFin.position) / refer * EngineForceRef; // Decrise velocity
-                    else
+                    }
+                    else if (distanceToGround > 7)
+                    {
                         EngineForce = 10;
+                    }
+                    else
+                    {
+                        EngineForce = 8;
+                    }
+
+
                 }
 
-                else if(EngineForce > 0.5f) // Shot down engine
+                else
                 {
-                    Debug.Log(EngineForce);
-
-                    EngineForce -= 0.05f;
-
-                    Debug.Log(EngineForce);
+                    EngineForce = 8;
                 }
-               
 
             }
         }
