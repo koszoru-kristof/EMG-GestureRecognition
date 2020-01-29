@@ -24,7 +24,7 @@ public class CheckpointController : MonoBehaviour
         CheckpointId = 0;
         scoreText.text = "Score " + CheckpointId.ToString();
 
-        winText.text = "";
+        winText.enabled = false;
 
         for (int index = 0; index < CheckpointsList.Length; index++)
             CheckpointsList[index].gameObject.SetActive(false);
@@ -55,6 +55,7 @@ public class CheckpointController : MonoBehaviour
         if (CheckpointId == 7 )
         {
             winText.text = "You won!!";
+            winText.enabled = true;
         }
 
         if (CheckpointId >= CheckpointsList.Length)
