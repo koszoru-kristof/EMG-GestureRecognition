@@ -16,5 +16,5 @@ DataNew = zeros(9,length(position));
 for jj = 1:length(position)
    DataNew(:,jj) = Data(:,position(jj)); % Arrays, cell
 end
-%end
+
 

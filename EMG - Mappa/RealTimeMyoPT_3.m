@@ -1,49 +1,41 @@
-
 close all; 
 clear; 
 clc;
 
-% labels = ["F", "R", "L", "U", "D", "OK"];
 labels = ["RX", "F", "OH", "R", "L", "DN"];
 
-%path(pathdef);
-clc;
+%% Add the path necessary for zmq
 
-% Add the path necessary for zmq
 run ./addZmqUtility;
 
 topic = '';
 ip    ='tcp://127.0.0.1:5000';
 
 [pub,ok] = Publisher(ip);
+
 if not(ok)
   errormsg('Publisher not initialized correctly');
 end
 
-% pause(1);
-% bool = pub.publish(topic, 'U');
-
 %% Load the trained model
-load('training/training_ALE-RFOHRLDW-2layer.mat');
+
+load('training/training_ALE-KK-MAX-RFOHRLDW-2layer.mat');
 
 %% Start acquisition
 
-for trial = 1:50
+trial = 1;
+
+while trial == 1
     
     % myo test
-
     MyoData =[];
     Time_   =[];
-
-    %% create myo mex (ONLY FIRST TIME!!!!)
-    
     install_myo_mex; % adds directories to MATLAB search path
     dataset = [];
-
-    act = 0;
+    % act = 0;
     
     %%
-    for labeIndex = 1:1  %length(labels) - just one cause real time
+    for labeIndex = 1:1  % one acquisition for real time
         
         close all
         Features=[];
@@ -56,93 +48,38 @@ for trial = 1:50
         mm = MyoMex(1);    
         pause(0.1);      
     
-            for k=1:1
-                % collect about T seconds of data
-                disp('Start recording');
-                T = 0.2; 
-                m1 = mm.myoData(1); % Time of acquisition
-                m1.clearLogs();
-                m1.startStreaming();
-                pause(T);
+        disp('Start recording');
+        T = 0.2; % Time of acquisition
+        m1 = mm.myoData(1); 
+        m1.clearLogs();
+        m1.startStreaming();
+        pause(T);
                 
-                initialTime = m1.timeEMG;
+        initialTime = m1.timeEMG;
         
-                clear initialTime;
+        clear initialTime;
                 
-                m1.stopStreaming();
+        m1.stopStreaming();
 
-                MYOdata=[];
+        MYOdata=[];
                 
-                time = m1.timeEMG_log - m1.timeEMG_log(1);
+        time = m1.timeEMG_log - m1.timeEMG_log(1);
                 
-                mu = mean(m1.emg_log(:,:))';
-                MyoData = m1.emg_log(:,:);
-
-            end  
-            mm.delete;
-            clear mm; 
+        mu = mean(m1.emg_log(:,:))';
+        MyoData = m1.emg_log(:,:);
+            
+        mm.delete;
+        clear mm; 
+        
     end
 
-%%
     clc
     
     result  = [];
     MyoData = MyoData';
 
-%% Simulation of MyoData
-%{
-
-
-clc
-clear all
-close all
-
-labels = ["F", "R", "L", "OK"];
-
-load('training/training_ALE-RFOHRLSM-2layer.mat');
-load('data/EMG2_ALE_complessivi_1_RXFOHRLSM.mat');
-
-% MyoData is a vector 8 x 400(data/s)*time(s) 25 sec -> 8x60000
-
-interest_actions = [1, 2, 3, 6]; 
-n_of_classes = length(interest_actions);
-
-FinalData = select(1, 25, interest_actions, Data);
-Data = FinalData; % change data wich we are working with
-
-temp = cellaF(Data, interest_actions);
-Data = temp;
-
-
-while(1)
+    % End acquisition
     
-n = round(4000*rand(1));
-
-MyoDataF = Data{1,1}(:,n:n+200);
-MyoDataR = Data{2,1}(:,n:n+200); 
-MyoDataL = Data{3,1}(:,n:n+200); 
-MyoDataOK = Data{4,1}(:,n:n+200);
-
-close all
-clc
-
-l = 20*rand(1);
-
-if(l<=5)
-    MyoData = MyoDataR;
-    "right"
-elseif(l>5 && l<=10)
-    MyoData = MyoDataL;
-    "left"
-elseif(l>10 && l <=15)
-    MyoData = MyoDataOK;
-    "OK"
-else
-    MyoData = MyoDataF;
-    "FIRST"
-end
-
-%}
 %% Convert datas to cells
 
 X = {MyoData};
@@ -174,37 +111,19 @@ X = X_fin';
     
     YPred = classify(net, X,'MiniBatchSize',miniBatchSize);
     
-    Prediction = mode(YPred)
-    % hist(YPred);
+    Prediction = mode(YPred);
     
-    Prediction = string(Prediction)
-    % msg = char(Prediction);
+    Prediction = string(Prediction);
     
-    %i=0;
-    %for ii = 1:length(YPred)
-    %    if(YPred(ii,1) == "OK")
-        i = i + 1;
-    %    end
-    %end
-
-    
-%%
-%pause(1);
-
 %% Init console
 
-%close all;
- 
- 
-   
-   %labels = ["RX", "F", "OH", "R", "L", "SM"];
    msg_labels = ["OK", "F", "U", "R", "L", "D"];
    
    index = find(labels(1,:) == Prediction);
    
    msg = char(msg_labels(index));
    
-  if (strcmp(msg,''))
+   if (strcmp(msg,''))
        break;
    end
    
@@ -213,7 +132,7 @@ X = X_fin';
 
 
 end
-%end
-%}
+
+
 
 
