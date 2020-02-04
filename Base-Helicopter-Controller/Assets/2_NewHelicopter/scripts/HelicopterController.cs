@@ -203,7 +203,7 @@ namespace NewHelicopter
             }
 
 
-            if (timeSinceMessage > 5f && Vector3.Distance(transform.position, targetFin.position) > 2f || count > 5f && Vector3.Distance(transform.position, targetFin.position) > 2f)
+            if ((timeSinceMessage > 5f && Vector3.Distance(transform.position, targetFin.position) > 2f) || (count > 5f && Vector3.Distance(transform.position, targetFin.position) > 2f))
             {
                 //Go home
                 Debug.Log("Going home");
