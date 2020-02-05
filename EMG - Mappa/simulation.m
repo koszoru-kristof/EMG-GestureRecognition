@@ -11,7 +11,7 @@ load('training/training_ALE-KK-MAX-RFOHRLDW-2layer');
 load('Data/TOT-SIMULAZIONE.mat');
 
 
-%%
+%%z
 
 interest_actions = [1, 2, 3, 4, 5, 6]; 
 n_of_classes = length(interest_actions);
@@ -98,6 +98,6 @@ X = X_fin';
     
 %
 
-pause(1);
+pause(1.5);
 
 end
