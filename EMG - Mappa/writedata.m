@@ -6,7 +6,7 @@ numberacqu_temp = numberacquTOT + (numberoffiles * time * numberacqu)/25;
 numberacquTOT = numberacqu_temp;
 % Data = zeros(9,numberoffiles * lengthData);
 
-for i = 1:numberoffiles
+for i = 1:numberoffiles % if we want conbine more that one .csv file taken from the same person
     
   filename = append(firstName, string(i),'-0', string(numberactions),'.csv')
    
