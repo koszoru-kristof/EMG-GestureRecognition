@@ -8,9 +8,9 @@ The project described in this repository is related to a deep learning applicati
 
 The gesture recognition is based on a Machine Learning Classifier developed in MATLAB using the 8 EMG sensors of the MYO bracelet. After the data collection and the model training, the software can recognize 6 predefined actions and send them to the Unity game module via ZMQ to control the Helicopter position and motion.
 
-Detailed information of the process, the choices made and the results are available on the paper written by the creators: [Project's report]().
+Detailed information of the process, the choices made and the results are available on the paper written by the creators: [Project's report](https://github.com/koszoru-kristof/EMG---Myo-gesture-recognition/blob/f435db0a4ae26560d868a9042739bcb112ec8c69/EmgProject_report.pdf).
 
-![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
+![EMGProject_image](https://github.com/koszoru-kristof/EMG---Myo-gesture-recognition/blob/f435db0a4ae26560d868a9042739bcb112ec8c69/EMGProject_image.jpg)
 
 
 ## Repository content
