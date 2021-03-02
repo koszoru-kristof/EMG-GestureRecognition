@@ -1,6 +1,6 @@
 # Electromagnetic sensor used in gesture recognition
 
-This repository contains the project developed by Alessandro De Martini, Dal Mas Massimiliano, and Kristóf Kozoru. 
+This repository contains the project developed by Alessandro De Martini, Dal Mas Massimiliano, and Kristóf Kozoru during the accademic year 2019/2020. 
 
 ## Short description
 
