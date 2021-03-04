@@ -1,16 +1,18 @@
-# Electromagnetic sensor used in gesture recognition
+# Gesture recognition with EMG sensors
 
-This repository contains the project developed by Alessandro De Martini, Dal Mas Massimiliano, and Kristóf Kozoru during the accademic year 2019/2020. 
+This repository contains the project developed by Alessandro De Martini, Dal Mas Massimiliano, and Kristóf Koszoru during the academic year 2019/2020. 
 
-## Short description
+## About the project
 
-The project described in this repository is related to a deep learning application used for serious game applications. An electromagnetic sensor (Myo) has been used as a monitor system on the user's arm. The electromagnetic signals of muscle movements are sendt to a neural network. The latter is connected with a server-client protocol to a Unity application. Therefore, it is possible to control the movements of a virtual object (e.g., a helicopter) with the gesture of the end.
+
+![EMGProject_image](https://github.com/koszoru-kristof/EMG---Myo-gesture-recognition/blob/f435db0a4ae26560d868a9042739bcb112ec8c69/EMGProject_image.jpg)
+
+The project described in this repository is related to a deep learning application used for serious game applications. An Electromyography sensor (Myo) has been used as a monitor system on the user's arm. The electromagnetic signals of muscle movements are sent to a neural network. The latter is connected with a server-client protocol to a Unity application. Therefore, it is possible to control the movements of a virtual object (e.g., a helicopter) with the gesture of the hand.
 
 The gesture recognition is based on a Machine Learning Classifier developed in MATLAB using the 8 EMG sensors of the MYO bracelet. After the data collection and the model training, the software can recognize 6 predefined actions and send them to the Unity game module via ZMQ to control the Helicopter position and motion.
 
-Detailed information of the process, the choices made and the results are available on the paper written by the creators: [Project's report](https://github.com/koszoru-kristof/EMG---Myo-gesture-recognition/blob/f435db0a4ae26560d868a9042739bcb112ec8c69/EmgProject_report.pdf).
+Project report: [pdf](https://github.com/koszoru-kristof/EMG---Myo-gesture-recognition/blob/f435db0a4ae26560d868a9042739bcb112ec8c69/EmgProject_report.pdf).
 
-![EMGProject_image](https://github.com/koszoru-kristof/EMG---Myo-gesture-recognition/blob/f435db0a4ae26560d868a9042739bcb112ec8c69/EMGProject_image.jpg)
 
 
 ## Repository content
@@ -25,3 +27,10 @@ Detailed information of the process, the choices made and the results are availa
 
 - ZMQ: folder containing the zmq protocol used for server-client communication. It has to be executed both from MATLAB and Unity.
 
+## Authors
+
+<a href="https://github.com/koszoru-kristof/Myo_EMG-GestureRecognition/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=koszoru-kristof/Myo_EMG-GestureRecognition" />
+</a>
+
+Made with [contributors-img](https://contrib.rocks).
