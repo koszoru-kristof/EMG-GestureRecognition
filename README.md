@@ -1,11 +1,11 @@
 # Gesture recognition with EMG sensors
 
-This repository contains the project developed by Alessandro De Martini, Dal Mas Massimiliano, and Kristóf Koszoru during the academic year 2019/2020. 
-
-## About the project
-
+Gesture recognition with MYO armband and various machine learning techniques. Model predictions used for controlling virtual helicopter in real-time in a unity3D environment.
 
 ![EMGProject_image](https://github.com/koszoru-kristof/EMG---Myo-gesture-recognition/blob/f435db0a4ae26560d868a9042739bcb112ec8c69/EMGProject_image.jpg)
+
+
+## About the project
 
 The project described in this repository is related to a deep learning application used for serious game applications. An Electromyography sensor (Myo) has been used as a monitor system on the user's arm. The electromagnetic signals of muscle movements are sent to a neural network. The latter is connected with a server-client protocol to a Unity application. Therefore, it is possible to control the movements of a virtual object (e.g., a helicopter) with the gesture of the hand.
 
@@ -33,4 +33,7 @@ Project report: [pdf](https://github.com/koszoru-kristof/EMG---Myo-gesture-recog
   <img src="https://contrib.rocks/image?repo=koszoru-kristof/Myo_EMG-GestureRecognition" />
 </a>
 
-Made with [contributors-img](https://contrib.rocks).
+* [Alessandro De Martini](https://github.com/AlessandroDeMartini)
+* [Dal Mas Massimiliano](https://github.com/max-codeware)
+* [Kristóf Koszoru](https://github.com/koszoru-kristof)
+
